@@ -10,7 +10,8 @@ class QuoteClient {
   static const String better_url = "https://favqs.com/api/qotd";
   final HttpClient httpClient = new HttpClient();
 
-  static const String field_quote = "body";
+  static const String field_quote = "quote";
+  static const String field_body = "body";
   static const String field_person = "author";
 
   Future<String> get() async {
@@ -21,7 +22,7 @@ class QuoteClient {
       if (response.statusCode == HttpStatus.OK) {
         var jsonQuote = await response.transform(utf8.decoder).join();
         var data = json.decode(jsonQuote);
-        result = "${data[field_quote]}\n - ${data[field_person]}";
+        result = "${data[field_quote][field_body]}\n - ${data[field_quote][field_person]}";
       } else {
         result = _NETWORK_ERROR + response.statusCode.toString();
       }

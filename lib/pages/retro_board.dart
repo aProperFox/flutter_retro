@@ -6,7 +6,7 @@ import 'package:flutter_retro/components/list_items.dart';
 import 'package:flutter_retro/components/dialogs.dart';
 
 class RetroBoardPage extends StatefulWidget {
-  static RetroBoardPage builder(BuildContext context) => new RetroBoardPage();
+  static RetroBoardPage builder(BuildContext context, String title) => new RetroBoardPage(title: title);
 
   final String title;
 

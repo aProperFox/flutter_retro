@@ -1,7 +1,6 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_retro/network/clients.dart';
-import 'package:flutter_retro/pages/retro_board.dart';
+import 'package:flutter_retro/pages/retro_board_list.dart';
 
 class SplashPage extends StatefulWidget {
   @override
@@ -31,14 +30,16 @@ class _SplashPageState extends State<SplashPage>
     );
     colorAnim = new Tween(begin: 0.0, end: 1.0).animate(controller);
     TickerFuture ticker = controller.repeat();
-    ticker.timeout(new Duration(seconds: 3),
-    onTimeout: () {
-      Navigator.of(context).push(new MaterialPageRoute(builder: RetroBoardPage.builder));
+    ticker.timeout(new Duration(seconds: 3), onTimeout: () {
+      Navigator.of(context).pushAndRemoveUntil(
+          new MaterialPageRoute(
+            builder: RetroBoardList.builder,
+          ),
+          (Route route) => route == null);
     });
     getQuote();
     super.initState();
   }
-
 
   @override
   void dispose() {
@@ -52,13 +53,24 @@ class _SplashPageState extends State<SplashPage>
       color: Theme.of(context).accentColor,
       child: new Center(
         child: new Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            new Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: new Text(
+                quote,
+                textAlign: TextAlign.center,
+                style: new TextStyle(
+                  fontSize: 18.0,
+                  color: Colors.white,
+                  fontFamily: 'Roboto',
+                  height: 1.3,
+                  decoration: TextDecoration.none,
+                ),
+              ),
+            ),
+            new Padding(padding: new EdgeInsets.symmetric(vertical: 8.0)),
             new LinearProgressIndicator(),
-            new Padding(padding: new EdgeInsets.symmetric(vertical: 16.0)),
-            new Text(
-              quote,
-              style: new TextStyle(fontSize: 18.0, color: Colors.white),
-            )
           ],
         ),
       ),

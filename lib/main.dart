@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_retro/pages/retro_board.dart';
+import 'package:flutter_retro/pages/splash_page.dart';
 import 'package:flutter_retro/res/text.dart';
 
 void main() => runApp(new MyApp());
@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
       theme: new ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: new RetroBoardPage(title: AppTitle),
+      home: new SplashPage(),
     );
   }
 }
