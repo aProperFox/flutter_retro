@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "147761395042",
+    "firebase_url": "https://flutter-retro.firebaseio.com",
+    "project_id": "flutter-retro",
+    "storage_bucket": "flutter-retro.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:147761395042:android:91418cc797741da3",
+        "android_client_info": {
+          "package_name": "com.aproperfox.flutterretro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "147761395042-ktebnocrlpto0no3egpfgdshvqgaqvn9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAevyiomsvihdyXL4LymLzAldR8zMldYiE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
