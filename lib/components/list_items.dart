@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_retro/pages/retro_board.dart';
 import 'package:flutter_retro/styles/text.dart';
 import 'sub_views.dart';
 
@@ -7,6 +8,11 @@ class RetroItem extends StatefulWidget {
   final Color background;
 
   RetroItem(this.text, this.background);
+  VoidCallback callback;
+
+  void addOnLongPressListener(VoidCallback callback) {
+    this.callback = callback;
+  }
 
   @override
   State<StatefulWidget> createState() => new _RetroItemState();
@@ -28,6 +34,7 @@ class _RetroItemState extends State<RetroItem> {
             color: widget.background,
             padding: const EdgeInsets.all(8.0),
             child: new InkWell(
+              onLongPress: widget.callback,
               onTap: onTap,
               splashColor: Colors.lightBlueAccent,
               highlightColor: Colors.white,
@@ -70,7 +77,7 @@ class _RetroItemState extends State<RetroItem> {
       case RetroItemState.Finished:
         return new Text(
           widget.text,
-          style: RetroItemStyle,
+          style: RetroItemStyleDone,
           softWrap: true,
         );
       default:
@@ -80,3 +87,37 @@ class _RetroItemState extends State<RetroItem> {
 }
 
 enum RetroItemState { UnStarted, InProgress, Finished }
+
+class RetroBoardItem extends StatelessWidget {
+  final String title;
+  final String id;
+
+  RetroBoardItem(this.title, this.id);
+
+  @override
+  Widget build(BuildContext context) {
+    return new Row(children: <Widget>[
+      new Expanded(
+        child: new Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+          child: new Container(
+            constraints: new BoxConstraints(minHeight: 80.0),
+            color: Colors.lightBlue,
+            padding: const EdgeInsets.all(8.0),
+            child: new InkWell(
+                onTap: () {
+                  Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => RetroBoardPage.builder(context, title)));
+                },
+                splashColor: Colors.lightBlueAccent,
+                highlightColor: Colors.white,
+                child: new Text(
+                  title,
+                  style: RetroItemStyle,
+                  softWrap: true,
+                )),
+          ),
+        ),
+      ),
+    ]);
+  }
+}

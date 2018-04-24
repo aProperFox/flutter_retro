@@ -6,7 +6,8 @@ import 'package:flutter_retro/components/list_items.dart';
 import 'package:flutter_retro/components/dialogs.dart';
 
 class RetroBoardPage extends StatefulWidget {
-  static RetroBoardPage builder(BuildContext context, String title) => new RetroBoardPage(title: title);
+  static RetroBoardPage builder(BuildContext context, String title) =>
+      new RetroBoardPage(title: title);
 
   final String title;
 
@@ -18,28 +19,58 @@ class RetroBoardPage extends StatefulWidget {
 
 class _RetroBoardPageState extends State<RetroBoardPage>
     with SingleTickerProviderStateMixin {
-  List<Widget> items = [];
+  List<Widget> startItems = [];
+  List<Widget> stopItems = [];
+  List<Widget> continueItems = [];
+  List<Widget> actionItems = [];
 
-  List<Widget> tabs = [
-    new Text(""),
-    new Text(""),
-    new Text(""),
-    new Text(""),
+  BottomNavigationBar navBar;
+
+  List<BottomNavigationBarItem> tabs = [
+    new BottomNavigationBarItem(
+      icon: new Icon(Icons.timeline),
+      title: new Text("Start"),
+    ),
+    new BottomNavigationBarItem(
+      icon: new Icon(Icons.thumb_up),
+      title: new Text("Continue"),
+    ),
+    new BottomNavigationBarItem(
+      icon: new Icon(Icons.thumb_down),
+      title: new Text("Stop"),
+    ),
+    new BottomNavigationBarItem(
+      icon: new Icon(Icons.add_to_photos),
+      title: new Text("Actions"),
+    ),
   ];
 
-  TabController controller;
+  void showDeleteDialog(List<Widget>)
 
   void onItemAdded(String item) {
     print(item);
     setState(() {
-      items.add(new RetroItem(item, Colors.blueAccent));
+      switch(navBar.currentIndex) {
+        case 0:
+          startItems.add(new RetroItem(item, Colors.blueAccent)
+          ..addOnLongPressListener(() => showDeleteDialog()));
+          break;
+        case 1:
+          stopItems.add(new RetroItem(item, Colors.green));
+          break;
+        case 2:
+          continueItems.add(new RetroItem(item, Colors.red));
+          break;
+        case 3:
+          actionItems.add(new RetroItem(item, Colors.deepPurple));
+          break;
+    }
     });
   }
 
   @override
   void initState() {
-    controller = new TabController(length: tabs.length, vsync: this);
-    //items.add(new TabBarView(children: tabs, controller: controller));
+    navBar = new BottomNavigationBar(items: tabs);
     super.initState();
   }
 
@@ -49,8 +80,21 @@ class _RetroBoardPageState extends State<RetroBoardPage>
       appBar: new AppBar(
         title: new Text(widget.title),
       ),
-      body: new Column(
-        children: items,
+      body: new PageView(
+          children: [
+            new Column(
+              children: startItems,
+            ),
+            new Column(
+              children: continueItems,
+            ),
+            new Column(
+              children: stopItems,
+            ),
+            new Column(
+              children: actionItems,
+            ),
+          ],
       ),
       floatingActionButton: new FloatingActionButton(
         onPressed: () {
@@ -61,6 +105,7 @@ class _RetroBoardPageState extends State<RetroBoardPage>
         },
         child: new Icon(Icons.add),
       ),
+      bottomNavigationBar: navBar,
     );
   }
 }
