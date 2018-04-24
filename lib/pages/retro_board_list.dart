@@ -12,7 +12,7 @@ class RetroBoardList extends StatefulWidget {
   static RetroBoardList builder(BuildContext context) => new RetroBoardList();
 
   @override
-  State<StatefulWidget> createState() => _RetroBoardListState();
+  State<StatefulWidget> createState() => new _RetroBoardListState();
 }
 
 class _RetroBoardListState extends State<RetroBoardList> {

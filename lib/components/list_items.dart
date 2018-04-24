@@ -9,7 +9,7 @@ class RetroItem extends StatefulWidget {
   RetroItem(this.text, this.background);
 
   @override
-  State<StatefulWidget> createState() => _RetroItemState();
+  State<StatefulWidget> createState() => new _RetroItemState();
 }
 
 class _RetroItemState extends State<RetroItem> {
@@ -21,7 +21,7 @@ class _RetroItemState extends State<RetroItem> {
   Widget build(BuildContext context) {
     return new Row(children: <Widget>[
       new Expanded(
-        child: Padding(
+        child: new Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
           child: new Container(
             constraints: new BoxConstraints(minHeight: 80.0),
