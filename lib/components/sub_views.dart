@@ -4,13 +4,13 @@ import 'package:flutter_retro/styles/text.dart';
 
 class TimerText extends StatefulWidget {
   TimerText(this.stopwatch);
+
   final Stopwatch stopwatch;
 
   TimerTextState createState() => new TimerTextState(stopwatch);
 }
 
 class TimerTextState extends State<TimerText> {
-
   Timer timer;
   final Stopwatch stopwatch;
   int minutes = 0;
@@ -30,7 +30,7 @@ class TimerTextState extends State<TimerText> {
   void initState() {
     seconds = (stopwatch.elapsedMilliseconds / 1000).truncate();
     minutes = (seconds / 60).truncate();
-        super.initState();
+    super.initState();
   }
 
   void callback(Timer timer) {
@@ -49,6 +49,10 @@ class TimerTextState extends State<TimerText> {
 
   @override
   Widget build(BuildContext context) {
-    return new Text("${_truncate(minutes)}:${_truncate(seconds)}", style: TimerStyle);
+    return new Text(
+      "${_truncate(minutes)}:${_truncate(seconds)}",
+      style: Theme.of(context).platform == TargetPlatform.android ? TimerStyle : iTimerStyle,
+      textAlign: TextAlign.center,
+    );
   }
 }

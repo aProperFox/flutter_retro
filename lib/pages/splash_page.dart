@@ -56,7 +56,7 @@ class _SplashPageState extends State<SplashPage>
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             new Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(16.0),
               child: new Text(
                 quote,
                 textAlign: TextAlign.center,

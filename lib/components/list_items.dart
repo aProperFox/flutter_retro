@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_retro/pages/retro_board.dart';
 import 'package:flutter_retro/styles/text.dart';
+import 'package:flutter_retro/styles/theme.dart';
 import 'sub_views.dart';
 
 class RetroItem extends StatefulWidget {
@@ -8,6 +9,7 @@ class RetroItem extends StatefulWidget {
   final Color background;
 
   RetroItem(this.text, this.background);
+
   VoidCallback callback;
 
   void addOnLongPressListener(VoidCallback callback) {
@@ -20,8 +22,8 @@ class RetroItem extends StatefulWidget {
 
 class _RetroItemState extends State<RetroItem> {
   int votes;
-  RetroItemState status = RetroItemState.UnStarted;
-  Stopwatch stopwatch = new Stopwatch();
+  RetroItemState status;
+  Stopwatch stopwatch;
 
   @override
   Widget build(BuildContext context) {
@@ -29,21 +31,28 @@ class _RetroItemState extends State<RetroItem> {
       new Expanded(
         child: new Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-          child: new Container(
-            constraints: new BoxConstraints(minHeight: 80.0),
+          child: new Material(
             color: widget.background,
-            padding: const EdgeInsets.all(8.0),
             child: new InkWell(
               onLongPress: widget.callback,
               onTap: onTap,
-              splashColor: Colors.lightBlueAccent,
-              highlightColor: Colors.white,
-              child: getView(),
+              child: new Container(
+                constraints: new BoxConstraints(minHeight: 80.0),
+                padding: const EdgeInsets.all(8.0),
+                child: getView(),
+              ),
             ),
           ),
         ),
       )
     ]);
+  }
+
+  @override
+  void initState() {
+    status = RetroItemState.UnStarted;
+    stopwatch = new Stopwatch();
+    super.initState();
   }
 
   void onTap() {
@@ -65,11 +74,12 @@ class _RetroItemState extends State<RetroItem> {
   }
 
   Widget getView() {
+    bool isAndroid = Theme.of(context).platform == TargetPlatform.android;
     switch (status) {
       case RetroItemState.UnStarted:
         return new Text(
           widget.text,
-          style: RetroItemStyle,
+          style: isAndroid ? RetroItemStyle : iRetroItemStyle,
           softWrap: true,
         );
       case RetroItemState.InProgress:
@@ -77,7 +87,7 @@ class _RetroItemState extends State<RetroItem> {
       case RetroItemState.Finished:
         return new Text(
           widget.text,
-          style: RetroItemStyleDone,
+          style: isAndroid ? RetroItemStyleDone : iRetroItemStyleDone,
           softWrap: true,
         );
       default:
@@ -106,7 +116,9 @@ class RetroBoardItem extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: new InkWell(
                 onTap: () {
-                  Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => RetroBoardPage.builder(context, title)));
+                  Navigator.of(context).push(new MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          RetroBoardPage.builder(context, title, themeProvider(context))));
                 },
                 splashColor: Colors.lightBlueAccent,
                 highlightColor: Colors.white,

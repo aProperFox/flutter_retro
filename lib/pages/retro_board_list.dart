@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_retro/components/list_items.dart';
 import 'package:flutter_retro/network/clients.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_retro/pages/retro_board.dart';
 import 'package:flutter_retro/res/text.dart';
+import 'package:flutter_retro/styles/theme.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:async';
 
@@ -33,23 +35,24 @@ class _RetroBoardListState extends State<RetroBoardList> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(AppTitle),
-      ),
+      appBar: Theme.of(context).platform == TargetPlatform.android
+          ? androidAppBar
+          : iOSAppBar,
       body: getList(),
     );
   }
-
+/*
   Widget boardsToTitles(Stream<QuerySnapshot> snapshots) {
     return new StreamBuilder(
         stream: snapshots,
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           return new Text(snapshot.data.documents.fold(null,
               (String current, DocumentSnapshot document) {
-            return "${current == null ? "" : current + ", "}${document['name']}";
+            return "${current == null ? "" :
+                current + ", "}${document['name']}";
           }));
         });
-  }
+  }*/
 
   Widget getList() {
     return new StreamBuilder<QuerySnapshot>(
@@ -59,11 +62,12 @@ class _RetroBoardListState extends State<RetroBoardList> {
         return new ListView(
           children: snapshot.data.documents.map((DocumentSnapshot document) {
             return new ListTile(
-              title: new Text(document['name']),
-              subtitle: boardsToTitles(
-                  document.reference.collection('boards').snapshots),
+              title: new RetroBoardItem(document['name'], document['idd']),
+              subtitle: new Text(""),
               onTap: () {
-                Navigator.of(context).push(new MaterialPageRoute(builder: (context) => RetroBoardPage.builder(context, AppTitle)));
+                Navigator.of(context).push(new MaterialPageRoute(
+                    builder: (context) =>
+                        RetroBoardPage.builder(context, AppTitle, themeProvider(context))));
               },
             );
           }).toList(),
