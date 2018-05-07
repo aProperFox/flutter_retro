@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_retro/pages/splash_page.dart';
+import 'package:flutter_retro/pages/test_page.dart';
 import 'package:flutter_retro/res/text.dart';
 
 void main() => runApp(new TestApp());
@@ -13,7 +14,7 @@ class TestApp extends StatelessWidget {
       theme: new ThemeData(
           primarySwatch: Colors.blue
       ),
-      home: new SplashPage(),
+      home: new ViewTesterPage(),
     );
   }
 }
