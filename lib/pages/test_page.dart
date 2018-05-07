@@ -19,6 +19,8 @@ class ViewTesterPage extends StatelessWidget {
           () {},
         ),
         new TimerText(new Stopwatch()..start()),
+        new Padding(padding: new EdgeInsets.all(8.0)),
+        new AnimatedClock(new Duration(minutes: 2)),
       ],
     );
   }
