@@ -7,7 +7,7 @@ ThemeData AndroidTheme = new ThemeData(
   accentColor: Colors.blueAccent,
   primaryColorLight: Colors.green,
   primaryColorDark: Colors.red,
-  disabledColor: Colors.pink
+  disabledColor: Colors.deepPurple
 );
 
 ThemeData iOSTheme = new ThemeData(

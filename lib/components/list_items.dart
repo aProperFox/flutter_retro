@@ -74,12 +74,11 @@ class _RetroItemState extends State<RetroItem> {
   }
 
   Widget getView() {
-    bool isAndroid = Theme.of(context).platform == TargetPlatform.android;
     switch (status) {
       case RetroItemState.UnStarted:
         return new Text(
           widget.text,
-          style: isAndroid ? RetroItemStyle : iRetroItemStyle,
+          style: RetroItemStyle,
           softWrap: true,
         );
       case RetroItemState.InProgress:
@@ -87,7 +86,7 @@ class _RetroItemState extends State<RetroItem> {
       case RetroItemState.Finished:
         return new Text(
           widget.text,
-          style: isAndroid ? RetroItemStyleDone : iRetroItemStyleDone,
+          style: RetroItemStyleDone,
           softWrap: true,
         );
       default:
@@ -101,8 +100,10 @@ enum RetroItemState { UnStarted, InProgress, Finished }
 class RetroBoardItem extends StatelessWidget {
   final String title;
   final String id;
+  final Widget subtitle;
+  final Function() onTap;
 
-  RetroBoardItem(this.title, this.id);
+  RetroBoardItem(this.title, this.id, this.subtitle, this.onTap);
 
   @override
   Widget build(BuildContext context) {
@@ -110,23 +111,26 @@ class RetroBoardItem extends StatelessWidget {
       new Expanded(
         child: new Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-          child: new Container(
-            constraints: new BoxConstraints(minHeight: 80.0),
+          child: new Material(
             color: Colors.lightBlue,
-            padding: const EdgeInsets.all(8.0),
             child: new InkWell(
-                onTap: () {
-                  Navigator.of(context).push(new MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                          RetroBoardPage.builder(context, title, themeProvider(context))));
-                },
-                splashColor: Colors.lightBlueAccent,
-                highlightColor: Colors.white,
-                child: new Text(
-                  title,
-                  style: RetroItemStyle,
-                  softWrap: true,
-                )),
+              onTap: onTap,
+              child: new Container(
+                alignment: Alignment.topLeft,
+                constraints: new BoxConstraints(minHeight: 80.0),
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: <Widget>[
+                    new Text(
+                      title,
+                      style: RetroBoardTitleStyle,
+                      softWrap: true,
+                    ),
+                    subtitle,
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
       ),

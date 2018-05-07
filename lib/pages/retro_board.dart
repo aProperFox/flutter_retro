@@ -90,25 +90,25 @@ class _RetroBoardPageState extends State<RetroBoardPage>
             Icons.timeline,
           ),
           title: new Text("Start"),
-          backgroundColor: Colors.blueGrey),
+          backgroundColor: getColor(0)),
       new BottomNavigationBarItem(
           icon: new Icon(
             Icons.thumb_up,
           ),
           title: new Text("Continue"),
-          backgroundColor: Colors.blueGrey),
+          backgroundColor: getColor(1)),
       new BottomNavigationBarItem(
           icon: new Icon(
             Icons.thumb_down,
           ),
           title: new Text("Stop"),
-          backgroundColor: Colors.blueGrey),
+          backgroundColor: getColor(2)),
       new BottomNavigationBarItem(
           icon: new Icon(
             Icons.add_to_photos,
           ),
           title: new Text("Actions"),
-          backgroundColor: Colors.blueGrey),
+          backgroundColor: getColor(3)),
     ];
 
     startItems = [
@@ -133,13 +133,13 @@ class _RetroBoardPageState extends State<RetroBoardPage>
   Color getColor(int index) {
     switch (index) {
       case 0:
-        return Colors.amberAccent;
+        return widget.theme.primaryColor;
       case 1:
-        return Colors.blueGrey;
+        return widget.theme.primaryColorLight;
       case 2: 
-        return Colors.red;
+        return widget.theme.primaryColorDark;
       case 3:
-        return Colors.pink;
+        return widget.theme.disabledColor;
       default:
         return Colors.black;
     }
@@ -197,7 +197,7 @@ class _RetroBoardPageState extends State<RetroBoardPage>
               builder: (BuildContext context) =>
                   newItemBuilder(context, onItemAdded));
         },
-        backgroundColor: Theme.of(context).platform == TargetPlatform.android ? getColor(_selectedIndex) : Colors.blueGrey,
+        backgroundColor: getColor(_selectedIndex),
         child: new Icon(Icons.add),
       ),
       bottomNavigationBar: navBar,
