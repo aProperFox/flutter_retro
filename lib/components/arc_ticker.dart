@@ -10,6 +10,8 @@ class ArcTicker extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     Rect rect = Offset.zero & size;
+    canvas.drawCircle(
+        rect.center, rect.width / 2, Paint()..color = Colors.blueGrey);
     canvas.drawArc(
         rect, -pi / 2, (2 * pi * drawnPercent) - (2 * pi), true, arcPaint);
   }

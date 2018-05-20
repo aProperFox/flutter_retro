@@ -3,6 +3,7 @@ import 'package:flutter_retro/pages/retro_board.dart';
 import 'package:flutter_retro/styles/text.dart';
 import 'package:flutter_retro/styles/theme.dart';
 import 'sub_views.dart';
+import 'package:flutter_retro/pages/retro_item_review.dart';
 
 class RetroItem extends StatefulWidget {
   final String text;
@@ -35,7 +36,15 @@ class _RetroItemState extends State<RetroItem> {
             color: widget.background,
             child: new InkWell(
               onLongPress: widget.callback,
-              onTap: onTap,
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return RetroItemReviewPage(widget.background, widget.text);
+                    },
+                  ),
+                );
+              },
               child: new Container(
                 constraints: new BoxConstraints(minHeight: 80.0),
                 padding: const EdgeInsets.all(8.0),

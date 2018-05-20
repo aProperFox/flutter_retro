@@ -68,13 +68,12 @@ class SteppedColorAnimation extends Animation<Color> {
   final List<Color> stepColors;
 
   SteppedColorAnimation(this.parent, this.steps, this.stepColors) {
-    // ignore: unrelated_type_equality_checks
-    //assert(steps.length == stepColors);
+    assert(steps.length == stepColors.length);
   }
 
   @override
   Color get value =>
-      stepColors[steps.indexWhere((value) => value > parent.value)];
+      stepColors[steps.indexWhere((value) => value >= (1 - parent.value)) ?? 0];
 
   @override
   void addListener(VoidCallback listener) {
@@ -120,25 +119,19 @@ class AnimatedClock extends StatefulWidget {
 
 class AnimatedClockState extends State<AnimatedClock>
     with SingleTickerProviderStateMixin {
-  //double progress;
   AnimationController controller;
   Animation<double> progress;
   SteppedColorAnimation color;
 
-  //Ticker ticker;
-
   @override
   void initState() {
-    controller = new AnimationController(vsync: this, duration: widget.limit);
+    controller = new AnimationController(vsync: this, duration: widget.limit * 2);
     progress =
-        new Tween<double>(begin: 0.0, end: widget.limit.inSeconds.toDouble())
+        new Tween<double>(begin: 0.0, end: widget.limit.inSeconds.toDouble() * 2)
             .animate(controller);
-    /*ticker = createTicker((Duration duration) {
-      progress = 
-    });*/
     color = new SteppedColorAnimation(
         controller,
-        [double.negativeInfinity, 0.0, 10.0],
+        [0.5, 0.5 + (widget.warningTime.inSeconds / widget.limit.inSeconds) / 2, 1.0],
         [widget.overflowColor, widget.warningColor, widget.fullColor]);
     super.initState();
     controller.forward();
