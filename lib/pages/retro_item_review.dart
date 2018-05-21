@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_retro/components/sub_views.dart';
+import 'package:flutter_retro/res/constants.dart';
 
 class RetroItemReviewPage extends StatefulWidget {
   final Color background;
   final String subject;
+  final RetroType type;
 
-  RetroItemReviewPage(this.background, this.subject);
+  RetroItemReviewPage(this.background, this.subject, this.type);
 
   @override
   RetroItemReviewPageState createState() {
@@ -16,22 +18,29 @@ class RetroItemReviewPage extends StatefulWidget {
 class RetroItemReviewPageState extends State<RetroItemReviewPage> {
   @override
   Widget build(BuildContext context) {
-    return Material(
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: widget.background,
+        title: Text(getRetroTitle(widget.type)),
+      ),
+        body: Material(
       color: widget.background,
       child: Container(
         padding: EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
             new Padding(
-              padding: const EdgeInsets.only(top: 32.0),
+              padding: const EdgeInsets.only(top: 16.0),
               child: Row(
                 children: <Widget>[
                   new Expanded(
-                    child: Text(widget.subject,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16.0,
-                    ),),
+                    child: Text(
+                      widget.subject,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18.0,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -65,6 +74,6 @@ class RetroItemReviewPageState extends State<RetroItemReviewPage> {
           ],
         ),
       ),
-    );
+    ));
   }
 }

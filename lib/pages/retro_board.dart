@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_retro/components/list_items.dart';
 import 'package:flutter_retro/components/dialogs.dart';
+import 'package:flutter_retro/res/constants.dart';
 import 'package:flutter_retro/styles/theme.dart';
 
 class RetroBoardPage extends StatefulWidget {
@@ -45,7 +46,7 @@ class _RetroBoardPageState extends State<RetroBoardPage>
   void onItemAdded(String text) {
     print(text);
     setState(() {
-      var item = new RetroItem(text, getColor(_selectedIndex));
+      var item = new RetroItem(text, getColor(_selectedIndex), getType(_selectedIndex));
       switch (_selectedIndex) {
         case 0:
           item.addOnLongPressListener(() => showDeleteDialog(item, () {
@@ -113,20 +114,20 @@ class _RetroBoardPageState extends State<RetroBoardPage>
 
     startItems = [
       new Padding(padding: new EdgeInsets.only(top: 8.0)),
-      new RetroItem("Start using Flutter!", getColor(0)),
+      new RetroItem("Start using Flutter!", getColor(0), RetroType.Start),
     ];
     continueItems = [
       new Padding(padding: new EdgeInsets.only(top: 8.0)),
-      new RetroItem("Continue building awesome apps", getColor(1)),
+      new RetroItem("Continue building awesome apps", getColor(1), RetroType.Continue),
     ];
     stopItems = [
       new Padding(padding: new EdgeInsets.only(top: 8.0)),
-      new RetroItem("Stop use React Native", getColor(2)),
+      new RetroItem("Stop use React Native", getColor(2), RetroType.Stop),
     ];
     actionItems = [
       new Padding(padding: new EdgeInsets.only(top: 8.0)),
       new RetroItem(
-          "Tyler will keep pestering people about Flutter", getColor(3)),
+          "Tyler will keep pestering people about Flutter", getColor(3), RetroType.Action),
     ];
   }
 
@@ -144,6 +145,9 @@ class _RetroBoardPageState extends State<RetroBoardPage>
         return Colors.black;
     }
   }
+
+  RetroType getType(int index) =>
+    RetroType.values[index];
 
   @override
   void dispose() {

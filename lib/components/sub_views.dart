@@ -125,14 +125,20 @@ class AnimatedClockState extends State<AnimatedClock>
 
   @override
   void initState() {
-    controller = new AnimationController(vsync: this, duration: widget.limit * 2);
-    progress =
-        new Tween<double>(begin: 0.0, end: widget.limit.inSeconds.toDouble() * 2)
-            .animate(controller);
-    color = new SteppedColorAnimation(
-        controller,
-        [0.5, 0.5 + (widget.warningTime.inSeconds / widget.limit.inSeconds) / 2, 1.0],
-        [widget.overflowColor, widget.warningColor, widget.fullColor]);
+    controller =
+        new AnimationController(vsync: this, duration: widget.limit * 2);
+    progress = new Tween<double>(
+            begin: 0.0, end: widget.limit.inSeconds.toDouble() * 2)
+        .animate(controller);
+    color = new SteppedColorAnimation(controller, [
+      0.5,
+      0.5 + (widget.warningTime.inSeconds / widget.limit.inSeconds) / 2,
+      1.0
+    ], [
+      widget.overflowColor,
+      widget.warningColor,
+      widget.fullColor
+    ]);
     super.initState();
     controller.forward();
     controller.addListener(() {
@@ -159,8 +165,10 @@ class AnimatedClockState extends State<AnimatedClock>
             ),
           ),
           child: new CustomPaint(
-            painter:
-                new ArcTicker(new Paint()..color = color.value, progress.value / widget.limit.inSeconds.toDouble()),
+            painter: new ArcTicker(
+              new Paint()..color = color.value,
+              progress.value / widget.limit.inSeconds.toDouble(),
+            ),
           ),
         ));
   }

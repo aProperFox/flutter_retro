@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_retro/pages/retro_board.dart';
+import 'package:flutter_retro/res/constants.dart';
 import 'package:flutter_retro/styles/text.dart';
 import 'package:flutter_retro/styles/theme.dart';
 import 'sub_views.dart';
@@ -8,8 +9,9 @@ import 'package:flutter_retro/pages/retro_item_review.dart';
 class RetroItem extends StatefulWidget {
   final String text;
   final Color background;
+  final RetroType type;
 
-  RetroItem(this.text, this.background);
+  RetroItem(this.text, this.background, this.type);
 
   VoidCallback callback;
 
@@ -40,7 +42,7 @@ class _RetroItemState extends State<RetroItem> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (BuildContext context) {
-                      return RetroItemReviewPage(widget.background, widget.text);
+                      return RetroItemReviewPage(widget.background, widget.text, widget.type);
                     },
                   ),
                 );

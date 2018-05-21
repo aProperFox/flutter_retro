@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_retro/components/dialogs.dart';
 import 'package:flutter_retro/components/list_items.dart';
 import 'package:flutter_retro/components/sub_views.dart';
+import 'package:flutter_retro/res/constants.dart';
 
 class ViewTesterPage extends StatelessWidget {
   @override
@@ -11,7 +12,7 @@ class ViewTesterPage extends StatelessWidget {
         new RetroItem(
           "Look, a retro item!",
           Colors.deepPurple,
-        ),
+        RetroType.Action),
         new RetroBoardItem(
           "Look, a retro board item!",
           "Not displayed",
