@@ -39,6 +39,12 @@ const TextStyle VotesStyle = const TextStyle(
     fontSize: 12.0
 );
 
+const TextStyle ButtonStyle = const TextStyle(
+  color: Colors.white,
+  fontSize: 16.0,
+  fontWeight: FontWeight.bold
+);
+
 TextTheme iOSTextTheme() {
   return new TextTheme(
       display1: iRetroItemStyle,

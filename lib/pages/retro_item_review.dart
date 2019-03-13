@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_retro/components/buttons.dart';
 import 'package:flutter_retro/components/sub_views.dart';
 import 'package:flutter_retro/res/constants.dart';
 
@@ -23,57 +24,52 @@ class RetroItemReviewPageState extends State<RetroItemReviewPage> {
         backgroundColor: widget.background,
         title: Text(getRetroTitle(widget.type)),
       ),
-        body: Material(
-      color: widget.background,
-      child: Container(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          children: <Widget>[
-            new Padding(
-              padding: const EdgeInsets.only(top: 16.0),
-              child: Row(
-                children: <Widget>[
-                  new Expanded(
-                    child: Text(
-                      widget.subject,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18.0,
+      body: Material(
+        color: widget.background,
+        child: Container(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            children: <Widget>[
+              new Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: Row(
+                  children: <Widget>[
+                    new Expanded(
+                      child: Text(
+                        widget.subject,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18.0,
+                        ),
                       ),
                     ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Center(
+                  child: new Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: AnimatedClock(
+                      Duration(minutes: 2),
+                    ),
+                  ),
+                ),
+              ),
+              Row(
+                children: <Widget>[
+                  MainButton(
+                    "Finish",
+                    () {
+                      Navigator.of(context).pop();
+                    },
                   ),
                 ],
               ),
-            ),
-            Expanded(
-              child: Center(
-                child: new Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: AnimatedClock(
-                    Duration(minutes: 2),
-                  ),
-                ),
-              ),
-            ),
-            Row(
-              children: <Widget>[
-                MaterialButton(
-                  color: Colors.green,
-                  child: Text(
-                    "FINISH",
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-    ));
+    );
   }
 }

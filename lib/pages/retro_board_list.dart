@@ -57,7 +57,7 @@ class _RetroBoardListState extends State<RetroBoardList> {
 
   Widget getList() {
     return new StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection('teams').snapshots,
+      stream: Firestore.instance.collection('teams').snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) return new Text('Loading...');
         return new ListView(
@@ -67,7 +67,7 @@ class _RetroBoardListState extends State<RetroBoardList> {
                 document['name'],
                 document['id'],
                 boardsToTitles(
-                    document.reference.collection('boards').snapshots),
+                    document.reference.collection('boards').snapshots()),
                 () => Navigator.of(context).push(new MaterialPageRoute(
                     builder: (context) => RetroBoardPage.builder(
                         context, AppTitle, themeProvider(context)))));
