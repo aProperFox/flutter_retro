@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_retro/components/list_items.dart';
 import 'package:flutter_retro/res/text.dart';
 
 Widget newItemBuilder(BuildContext context, Function(String) onSubmit) {
@@ -9,7 +10,7 @@ Widget newItemBuilder(BuildContext context, Function(String) onSubmit) {
   TextField _inputField = new TextField(
     controller: _controller,
     maxLength: 300,
-    maxLines: 5,
+    maxLines: 3,
   );
 
   void _onNewItem(String text) {
@@ -31,6 +32,32 @@ Widget newItemBuilder(BuildContext context, Function(String) onSubmit) {
   return new AlertDialog(
     title: new Text(NewRetroItemTitle),
     content: _inputField,
+    actions: <Widget>[
+      cancelButton,
+      addButton
+    ],
+  ).build(context);
+}
+
+Widget confirmDeleteBuilder(BuildContext context, RetroItem item, VoidCallback onSubmit) {
+
+  void _onConfirm() {
+      onSubmit();
+      Navigator.of(context).pop();
+  }
+
+  FlatButton cancelButton = new FlatButton(
+    child: new Text(CancelAddButton),
+    onPressed: () => Navigator.of(context).pop(),
+  );
+  FlatButton addButton = new FlatButton(
+    child: new Text(AddItemButton),
+    onPressed: _onConfirm,
+  );
+
+  return new AlertDialog(
+    title: new Text("Are you sure you want to delete this item?"),
+    content: item,
     actions: <Widget>[
       cancelButton,
       addButton
