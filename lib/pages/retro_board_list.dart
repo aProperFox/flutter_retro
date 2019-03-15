@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_retro/api/local_db.dart';
+import 'package:flutter_retro/api/models.dart';
+import 'package:flutter_retro/api/repos.dart';
 import 'package:flutter_retro/components/list_items.dart';
 import 'package:flutter_retro/network/clients.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -27,9 +30,12 @@ class _RetroBoardListState extends State<RetroBoardList> {
     }
   }
 
+  RetroRepo retroRepo;
+
   @override
   void initState() {
     //_ensureLoggedIn();
+    retroRepo = LocalDb.getInstance();
     super.initState();
   }
 
@@ -41,33 +47,17 @@ class _RetroBoardListState extends State<RetroBoardList> {
     );
   }
 
-  static Widget boardsToTitles(Stream<QuerySnapshot> snapshots) {
-    return new StreamBuilder(
-        stream: snapshots,
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (!snapshot.hasData) return new Text('Loading...');
-          return new Text(snapshot.data.documents.fold(null,
-              (String current, DocumentSnapshot document) {
-            return "${current == null ? "" :
-                current + ", "}${document['name']}";
-          }),
-          style: RetroBoardSubStyle,);
-        });
-  }
-
   Widget getList() {
-    return new StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection('teams').snapshots(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (!snapshot.hasData) return new Text('Loading...');
+    return new FutureBuilder(
+      future: retroRepo.getRetroBoards(""),
+      builder: (BuildContext context, AsyncSnapshot<List<RetroBoard>> snapshot) {
         return new ListView(
           padding: new EdgeInsets.only(top: 8.0),
-          children: snapshot.data.documents.map((DocumentSnapshot document) {
+          children: snapshot.data.map((RetroBoard retroBoard) {
             return new RetroBoardItem(
-                document['name'],
-                document['id'],
-                boardsToTitles(
-                    document.reference.collection('boards').snapshots()),
+                retroBoard.name,
+                retroBoard.id,
+                null,
                 () => Navigator.of(context).push(new MaterialPageRoute(
                     builder: (context) => RetroBoardPage.builder(
                         context, AppTitle, themeProvider(context)))));

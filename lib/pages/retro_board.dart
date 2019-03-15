@@ -8,17 +8,9 @@ import 'package:flutter_retro/res/constants.dart';
 import 'package:flutter_retro/styles/theme.dart';
 
 class RetroBoardPage extends StatefulWidget {
-  static RetroBoardPage builder(
-          BuildContext context, String title, ThemeData data) =>
-      new RetroBoardPage(
-        title: title,
-        theme: data,
-      );
+  final String boardId;
 
-  final ThemeData theme;
-  final String title;
-
-  RetroBoardPage({Key key, this.title, this.theme}) : super(key: key);
+  RetroBoardPage({Key key, this.boardId}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => new _RetroBoardPageState();
@@ -81,11 +73,14 @@ class _RetroBoardPageState extends State<RetroBoardPage>
     });
   }
 
+  ThemeData theme;
+
   @override
   void initState() {
     initItems();
     controller = new PageController(initialPage: 0);
     super.initState();
+    theme = Theme.of(context);
   }
 
   void initItems() {
@@ -139,13 +134,13 @@ class _RetroBoardPageState extends State<RetroBoardPage>
   Color getColor(int index) {
     switch (index) {
       case 0:
-        return widget.theme.primaryColor;
+        return theme.primaryColor;
       case 1:
-        return widget.theme.primaryColorLight;
+        return theme.primaryColorLight;
       case 2:
-        return widget.theme.primaryColorDark;
+        return theme.primaryColorDark;
       case 3:
-        return widget.theme.disabledColor;
+        return theme.disabledColor;
       default:
         return Colors.black;
     }

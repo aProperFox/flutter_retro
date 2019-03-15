@@ -5,24 +5,24 @@ import 'package:collection/collection.dart';
 enum Role { Admin, Leader, Contributor, Spectator }
 
 class Team {
-  String id;
-  String name;
-  List<Member> members;
-  List<RetroBoard> retros;
+  final String id;
+  final String name;
+  final List<Member> members;
+  final List<RetroBoard> retros;
 
   Team({this.id, this.name, this.members, this.retros});
 
-  Team.fromJson(Map<String, dynamic> json) {
-    this.id = json['id'];
-    this.name = json['name'];
-    this.members =
-        (json['members'] as List)?.map((i) => Member.fromJson(i))?.toList() ??
+  Team.fromJson(Map<String, dynamic> json)
+      : this.id = json['id'],
+        this.name = json['name'],
+        this.members = (json['members'] as List)
+                ?.map((i) => Member.fromJson(i))
+                ?.toList() ??
+            List(),
+        this.retros = (json['retros'] as List)
+                ?.map((i) => RetroBoard.fromJson(i))
+                ?.toList() ??
             List();
-    this.retros = (json['retros'] as List)
-            ?.map((i) => RetroBoard.fromJson(i))
-            ?.toList() ??
-        List();
-  }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -49,15 +49,14 @@ class Team {
 }
 
 class Member {
-  Role role;
-  User user;
+  final Role role;
+  final User user;
 
   Member({this.role, this.user});
 
-  Member.fromJson(Map<String, dynamic> json) {
-    this.role = json['role'];
-    this.user = User.fromJson(json['user']);
-  }
+  Member.fromJson(Map<String, dynamic> json)
+      : this.role = json['role'],
+        this.user = User.fromJson(json['user']);
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -79,21 +78,23 @@ class Member {
 }
 
 class RetroBoard {
-  String id;
-  DateTime dueDate;
-  String teamName;
-  List<Category> columns;
+  final String id;
+  final DateTime dueDate;
+  final String teamName;
+  final List<Category> columns;
+  final String name;
 
-  RetroBoard({this.id, this.dueDate, this.teamName, this.columns});
+  RetroBoard({this.id, this.dueDate, this.teamName, this.columns, this.name});
 
-  RetroBoard.fromJson(Map<String, dynamic> json) {
-    this.id = json['id'];
-    this.dueDate = DateTime.parse(json['dueDate']);
-    this.teamName = json['teamName'];
-    this.columns =
-        (json['columns'] as List)?.map((i) => Category.fromJson(i))?.toList() ??
-            List();
-  }
+  RetroBoard.fromJson(Map<String, dynamic> json)
+      : this.id = json['id'],
+        this.dueDate = DateTime.parse(json['dueDate']),
+        this.teamName = json['teamName'],
+        this.columns = (json['columns'] as List)
+                ?.map((i) => Category.fromJson(i))
+                ?.toList() ??
+            List(),
+        this.name = json['name'];
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -101,6 +102,7 @@ class RetroBoard {
     data['dueDate'] = this.dueDate.toIso8601String();
     data['teamName'] = this.teamName;
     data['columns'] = this.columns?.map((i) => i.toJson())?.toList() ?? List();
+    data['name'] = this.name;
     return data;
   }
 
@@ -112,7 +114,8 @@ class RetroBoard {
           id == other.id &&
           dueDate == other.dueDate &&
           teamName == other.teamName &&
-          ListEquality().equals(columns, other.columns);
+          ListEquality().equals(columns, other.columns) &&
+          name == other.name;
 
   @override
   int get hashCode =>
@@ -120,12 +123,12 @@ class RetroBoard {
 }
 
 class User {
-  String id;
-  String firstName;
-  String lastName;
-  String email;
-  String avatarUrl;
-  bool isVerified;
+  final String id;
+  final String firstName;
+  final String lastName;
+  final String email;
+  final String avatarUrl;
+  final bool isVerified;
 
   User(
       {this.id,
@@ -135,14 +138,13 @@ class User {
       this.avatarUrl,
       this.isVerified});
 
-  User.fromJson(Map<String, dynamic> json) {
-    this.id = json['id'];
-    this.firstName = json['firstName'];
-    this.lastName = json['lastName'];
-    this.email = json['email'];
-    this.avatarUrl = json['avatarUrl'];
-    this.isVerified = json['isVerified'];
-  }
+  User.fromJson(Map<String, dynamic> json)
+      : this.id = json['id'],
+        this.firstName = json['firstName'],
+        this.lastName = json['lastName'],
+        this.email = json['email'],
+        this.avatarUrl = json['avatarUrl'],
+        this.isVerified = json['isVerified'];
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -178,19 +180,19 @@ class User {
 }
 
 class Category {
-  String name;
-  IconData icon;
-  List<RetroItem> items;
+  final String name;
+  final IconData icon;
+  final List<RetroItem> items;
 
   Category({this.name, this.icon, this.items});
 
-  Category.fromJson(Map<String, dynamic> json) {
-    this.name = json['name'];
-    this.icon = getIconFromName(json['icon']);
-    this.items =
-        (json['items'] as List)?.map((i) => RetroItem.fromJson(i))?.toList() ??
+  Category.fromJson(Map<String, dynamic> json)
+      : this.name = json['name'],
+        this.icon = getIconFromName(json['icon']),
+        this.items = (json['items'] as List)
+                ?.map((i) => RetroItem.fromJson(i))
+                ?.toList() ??
             List();
-  }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -214,13 +216,13 @@ class Category {
 }
 
 class RetroItem {
-  String id;
-  String description;
-  DateTime createdAt;
-  DateTime updatedAt;
-  int votes;
-  User user;
-  List<Comment> comments;
+  final String id;
+  final String description;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final int votes;
+  final User user;
+  final List<Comment> comments;
 
   RetroItem(
       {this.id,
@@ -231,17 +233,17 @@ class RetroItem {
       this.user,
       this.comments});
 
-  RetroItem.fromJson(Map<String, dynamic> json) {
-    this.id = json['id'];
-    this.description = json['description'];
-    this.createdAt = DateTime.parse(json['createdAt']);
-    this.updatedAt = DateTime.parse(json['updatedAt']);
-    this.votes = json['votes'];
-    this.user = json['user'] != null ? User.fromJson(json['user']) : null;
-    this.comments =
-        (json['comments'] as List)?.map((i) => Comment.fromJson(i))?.toList() ??
+  RetroItem.fromJson(Map<String, dynamic> json)
+      : this.id = json['id'],
+        this.description = json['description'],
+        this.createdAt = DateTime.parse(json['createdAt']),
+        this.updatedAt = DateTime.parse(json['updatedAt']),
+        this.votes = json['votes'],
+        this.user = json['user'] != null ? User.fromJson(json['user']) : null,
+        this.comments = (json['comments'] as List)
+                ?.map((i) => Comment.fromJson(i))
+                ?.toList() ??
             List();
-  }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -281,21 +283,20 @@ class RetroItem {
 }
 
 class Comment {
-  String id;
-  String content;
-  DateTime createdAt;
-  DateTime updatedAt;
-  User user;
+  final String id;
+  final String content;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final User user;
 
   Comment({this.id, this.content, this.createdAt, this.updatedAt, this.user});
 
-  Comment.fromJson(Map<String, dynamic> json) {
-    this.id = json['id'];
-    this.content = json['content'];
-    this.createdAt = DateTime.parse(json['createdAt']);
-    this.updatedAt = DateTime.parse(json['updatedAt']);
-    this.user = User.fromJson(json['user']);
-  }
+  Comment.fromJson(Map<String, dynamic> json)
+      : this.id = json['id'],
+        this.content = json['content'],
+        this.createdAt = DateTime.parse(json['createdAt']),
+        this.updatedAt = DateTime.parse(json['updatedAt']),
+        this.user = User.fromJson(json['user']);
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();

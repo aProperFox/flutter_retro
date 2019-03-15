@@ -9,6 +9,14 @@ class LocalDb extends RetroRepo {
   static const String _KEY_BOARD_LIST = "key_board_list";
   static const String _KEY_RETRO_BOARD_PREFIX = "key_retro_board_prefix_";
 
+  static final LocalDb _instance = LocalDb._internal();
+
+  LocalDb._internal();
+
+  factory LocalDb.getInstance() {
+    return _instance;
+  }
+
   @override
   Future<RetroBoard> createRetroBoard(
     String name,
