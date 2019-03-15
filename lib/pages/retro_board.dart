@@ -8,8 +8,12 @@ import 'package:flutter_retro/res/constants.dart';
 import 'package:flutter_retro/styles/theme.dart';
 
 class RetroBoardPage extends StatefulWidget {
-  static RetroBoardPage builder(BuildContext context, String title, ThemeData data) =>
-      new RetroBoardPage(title: title, theme: data,);
+  static RetroBoardPage builder(
+          BuildContext context, String title, ThemeData data) =>
+      new RetroBoardPage(
+        title: title,
+        theme: data,
+      );
 
   final ThemeData theme;
   final String title;
@@ -46,7 +50,8 @@ class _RetroBoardPageState extends State<RetroBoardPage>
   void onItemAdded(String text) {
     print(text);
     setState(() {
-      var item = new RetroItem(text, getColor(_selectedIndex), getType(_selectedIndex));
+      var item = new RetroItem(
+          text, getColor(_selectedIndex), getType(_selectedIndex));
       switch (_selectedIndex) {
         case 0:
           item.addOnLongPressListener(() => showDeleteDialog(item, () {
@@ -75,7 +80,6 @@ class _RetroBoardPageState extends State<RetroBoardPage>
       }
     });
   }
-
 
   @override
   void initState() {
@@ -118,7 +122,8 @@ class _RetroBoardPageState extends State<RetroBoardPage>
     ];
     continueItems = [
       new Padding(padding: new EdgeInsets.only(top: 8.0)),
-      new RetroItem("Continue building awesome apps", getColor(1), RetroType.Continue),
+      new RetroItem(
+          "Continue building awesome apps", getColor(1), RetroType.Continue),
     ];
     stopItems = [
       new Padding(padding: new EdgeInsets.only(top: 8.0)),
@@ -126,8 +131,8 @@ class _RetroBoardPageState extends State<RetroBoardPage>
     ];
     actionItems = [
       new Padding(padding: new EdgeInsets.only(top: 8.0)),
-      new RetroItem(
-          "Tyler will keep pestering people about Flutter", getColor(3), RetroType.Action),
+      new RetroItem("Tyler will keep pestering people about Flutter",
+          getColor(3), RetroType.Action),
     ];
   }
 
@@ -137,7 +142,7 @@ class _RetroBoardPageState extends State<RetroBoardPage>
         return widget.theme.primaryColor;
       case 1:
         return widget.theme.primaryColorLight;
-      case 2: 
+      case 2:
         return widget.theme.primaryColorDark;
       case 3:
         return widget.theme.disabledColor;
@@ -146,8 +151,7 @@ class _RetroBoardPageState extends State<RetroBoardPage>
     }
   }
 
-  RetroType getType(int index) =>
-    RetroType.values[index];
+  RetroType getType(int index) => RetroType.values[index];
 
   @override
   void dispose() {
