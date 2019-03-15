@@ -1,76 +1,328 @@
 import 'package:flutter/material.dart';
+import '../util/icons_helper.dart';
+import 'package:collection/collection.dart';
 
 enum Role { Admin, Leader, Contributor, Spectator }
 
-class User {
-  final String id;
-  final String firstName;
-  final String lastName;
-  final String email;
-  final bool isVerified;
-  final String avatarUrl;
+class Team {
+  String id;
+  String name;
+  List<Member> members;
+  List<RetroBoard> retros;
 
-  String get displayName {
-    return "$firstName ${lastName[0]}.";
+  Team({this.id, this.name, this.members, this.retros});
+
+  Team.fromJson(Map<String, dynamic> json) {
+    this.id = json['id'];
+    this.name = json['name'];
+    this.members =
+        (json['members'] as List)?.map((i) => Member.fromJson(i))?.toList() ??
+            List();
+    this.retros = (json['retros'] as List)
+            ?.map((i) => RetroBoard.fromJson(i))
+            ?.toList() ??
+        List();
   }
 
-  User(this.id, this.firstName, this.lastName, this.email, this.isVerified,
-      this.avatarUrl);
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    data['members'] = this.members?.map((i) => i.toJson())?.toList() ?? List();
+    data['retros'] = this.retros?.map((i) => i.toJson())?.toList() ?? List();
+    return data;
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Team &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name &&
+          ListEquality().equals(members, other.members) &&
+          ListEquality().equals(retros, other.retros);
+
+  @override
+  int get hashCode =>
+      id.hashCode ^ name.hashCode ^ members.hashCode ^ retros.hashCode;
 }
 
 class Member {
-  final User user;
-  final Role role;
+  Role role;
+  User user;
 
-  Member(this.user, this.role);
+  Member({this.role, this.user});
+
+  Member.fromJson(Map<String, dynamic> json) {
+    this.role = json['role'];
+    this.user = User.fromJson(json['user']);
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['role'] = this.role;
+    data['user'] = this.user.toJson();
+    return data;
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Member &&
+          runtimeType == other.runtimeType &&
+          role == other.role &&
+          user == other.user;
+
+  @override
+  int get hashCode => role.hashCode ^ user.hashCode;
 }
 
-class Column {
-  final IconData icon;
-  final String name;
-  final List<Item> items;
+class RetroBoard {
+  String id;
+  DateTime dueDate;
+  String teamName;
+  List<Category> columns;
 
-  Column(this.icon, this.name, this.items);
+  RetroBoard({this.id, this.dueDate, this.teamName, this.columns});
+
+  RetroBoard.fromJson(Map<String, dynamic> json) {
+    this.id = json['id'];
+    this.dueDate = DateTime.parse(json['dueDate']);
+    this.teamName = json['teamName'];
+    this.columns =
+        (json['columns'] as List)?.map((i) => Category.fromJson(i))?.toList() ??
+            List();
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['dueDate'] = this.dueDate.toIso8601String();
+    data['teamName'] = this.teamName;
+    data['columns'] = this.columns?.map((i) => i.toJson())?.toList() ?? List();
+    return data;
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RetroBoard &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          dueDate == other.dueDate &&
+          teamName == other.teamName &&
+          ListEquality().equals(columns, other.columns);
+
+  @override
+  int get hashCode =>
+      id.hashCode ^ dueDate.hashCode ^ teamName.hashCode ^ columns.hashCode;
+}
+
+class User {
+  String id;
+  String firstName;
+  String lastName;
+  String email;
+  String avatarUrl;
+  bool isVerified;
+
+  User(
+      {this.id,
+      this.firstName,
+      this.lastName,
+      this.email,
+      this.avatarUrl,
+      this.isVerified});
+
+  User.fromJson(Map<String, dynamic> json) {
+    this.id = json['id'];
+    this.firstName = json['firstName'];
+    this.lastName = json['lastName'];
+    this.email = json['email'];
+    this.avatarUrl = json['avatarUrl'];
+    this.isVerified = json['isVerified'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['firstName'] = this.firstName;
+    data['lastName'] = this.lastName;
+    data['email'] = this.email;
+    data['avatarUrl'] = this.avatarUrl;
+    data['isVerified'] = this.isVerified;
+    return data;
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is User &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          firstName == other.firstName &&
+          lastName == other.lastName &&
+          email == other.email &&
+          avatarUrl == other.avatarUrl &&
+          isVerified == other.isVerified;
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      firstName.hashCode ^
+      lastName.hashCode ^
+      email.hashCode ^
+      avatarUrl.hashCode ^
+      isVerified.hashCode;
+}
+
+class Category {
+  String name;
+  IconData icon;
+  List<RetroItem> items;
+
+  Category({this.name, this.icon, this.items});
+
+  Category.fromJson(Map<String, dynamic> json) {
+    this.name = json['name'];
+    this.icon = getIconFromName(json['icon']);
+    this.items =
+        (json['items'] as List)?.map((i) => RetroItem.fromJson(i))?.toList() ??
+            List();
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['name'] = this.name;
+    data['icon'] = getNameFromIcon(this.icon);
+    data['items'] = this.items?.map((i) => i.toJson())?.toList() ?? List();
+    return data;
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Category &&
+          runtimeType == other.runtimeType &&
+          name == other.name &&
+          icon == other.icon &&
+          ListEquality().equals(items, other.items);
+
+  @override
+  int get hashCode => name.hashCode ^ icon.hashCode ^ items.hashCode;
+}
+
+class RetroItem {
+  String id;
+  String description;
+  DateTime createdAt;
+  DateTime updatedAt;
+  int votes;
+  User user;
+  List<Comment> comments;
+
+  RetroItem(
+      {this.id,
+      this.description,
+      this.createdAt,
+      this.updatedAt,
+      this.votes,
+      this.user,
+      this.comments});
+
+  RetroItem.fromJson(Map<String, dynamic> json) {
+    this.id = json['id'];
+    this.description = json['description'];
+    this.createdAt = DateTime.parse(json['createdAt']);
+    this.updatedAt = DateTime.parse(json['updatedAt']);
+    this.votes = json['votes'];
+    this.user = json['user'] != null ? User.fromJson(json['user']) : null;
+    this.comments =
+        (json['comments'] as List)?.map((i) => Comment.fromJson(i))?.toList() ??
+            List();
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['description'] = this.description;
+    data['createdAt'] = this.createdAt.toIso8601String();
+    data['updatedAt'] = this.updatedAt.toIso8601String();
+    data['votes'] = this.votes;
+    data['user'] = this.user?.toJson();
+    data['comments'] =
+        this.comments?.map((i) => i.toJson())?.toList() ?? List();
+    return data;
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RetroItem &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          description == other.description &&
+          createdAt == other.createdAt &&
+          updatedAt == other.updatedAt &&
+          votes == other.votes &&
+          user == other.user &&
+          ListEquality().equals(comments, other.comments);
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      description.hashCode ^
+      createdAt.hashCode ^
+      updatedAt.hashCode ^
+      votes.hashCode ^
+      user.hashCode ^
+      comments.hashCode;
 }
 
 class Comment {
-  final String id;
-  final User user;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final Item item;
+  String id;
+  String content;
+  DateTime createdAt;
+  DateTime updatedAt;
+  User user;
 
-  Comment(this.id, this.user, this.createdAt, this.updatedAt, this.item);
-}
+  Comment({this.id, this.content, this.createdAt, this.updatedAt, this.user});
 
-class Item {
-  final String id;
-  final String description;
-  final int votes;
-  final List<Comment> comments;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final User user;
+  Comment.fromJson(Map<String, dynamic> json) {
+    this.id = json['id'];
+    this.content = json['content'];
+    this.createdAt = DateTime.parse(json['createdAt']);
+    this.updatedAt = DateTime.parse(json['updatedAt']);
+    this.user = User.fromJson(json['user']);
+  }
 
-  Item(this.id, this.description, this.votes, this.comments, this.createdAt,
-      this.updatedAt, this.user);
-}
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['content'] = this.content;
+    data['createdAt'] = this.createdAt.toIso8601String();
+    data['updatedAt'] = this.updatedAt.toIso8601String();
+    data['user'] = this.user.toJson();
+    return data;
+  }
 
-class Team {
-  final String id;
-  final String name;
-  final List<Retro> retros;
-  final List<Member> members;
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Comment &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          content == other.content &&
+          createdAt == other.createdAt &&
+          updatedAt == other.updatedAt &&
+          user == other.user;
 
-  Team(this.id, this.name, this.retros, this.members);
-}
-
-class Retro {
-  final String id;
-  final String name;
-  final List<Column> columns;
-  final DateTime dueDate;
-  final String teamName;
-
-  Retro(this.id, this.name, this.columns, this.dueDate, this.teamName);
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      content.hashCode ^
+      createdAt.hashCode ^
+      updatedAt.hashCode ^
+      user.hashCode;
 }
