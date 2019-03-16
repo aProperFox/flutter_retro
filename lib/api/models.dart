@@ -211,7 +211,7 @@ class Category {
       other is Category &&
           runtimeType == other.runtimeType &&
           name == other.name &&
-          color == other.color &&
+          color.value == other.color.value &&
           icon == other.icon &&
           ListEquality().equals(items, other.items);
 
