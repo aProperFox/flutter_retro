@@ -26,8 +26,12 @@ void main() {
       user: user,
       description: "I want more biscuits",
       votes: 1);
-  final column =
-      Category(name: "Do more", icon: Icons.thumb_up, items: [retroItem]);
+  final column = Category(
+    name: "Do more",
+    color: Colors.green,
+    icon: Icons.thumb_up,
+    items: [retroItem],
+  );
   final retroBoard = RetroBoard(
       id: "laa89fa",
       dueDate: DateTime.now(),

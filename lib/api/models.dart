@@ -182,12 +182,14 @@ class User {
 class Category {
   final String name;
   final IconData icon;
+  final Color color;
   final List<RetroItem> items;
 
-  Category({this.name, this.icon, this.items});
+  Category({this.name, this.icon, this.color, this.items});
 
   Category.fromJson(Map<String, dynamic> json)
       : this.name = json['name'],
+        this.color = Color(json['color']),
         this.icon = getIconFromName(json['icon']),
         this.items = (json['items'] as List)
                 ?.map((i) => RetroItem.fromJson(i))
@@ -197,6 +199,7 @@ class Category {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['name'] = this.name;
+    data['color'] = this.color.value;
     data['icon'] = getNameFromIcon(this.icon);
     data['items'] = this.items?.map((i) => i.toJson())?.toList() ?? List();
     return data;
@@ -208,11 +211,13 @@ class Category {
       other is Category &&
           runtimeType == other.runtimeType &&
           name == other.name &&
+          color == other.color &&
           icon == other.icon &&
           ListEquality().equals(items, other.items);
 
   @override
-  int get hashCode => name.hashCode ^ icon.hashCode ^ items.hashCode;
+  int get hashCode =>
+      name.hashCode ^ icon.hashCode ^ color.hashCode ^ items.hashCode;
 }
 
 class RetroItem {

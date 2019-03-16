@@ -5,10 +5,10 @@ import 'package:flutter_retro/api/models.dart';
 import 'package:flutter_retro/api/repos.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class LocalDb extends RetroRepo {
-  static const String _KEY_BOARD_LIST = "key_board_list";
-  static const String _KEY_RETRO_BOARD_PREFIX = "key_retro_board_prefix_";
+const String _KEY_BOARD_LIST = "key_board_list";
+const String _KEY_RETRO_BOARD_PREFIX = "key_retro_board_prefix_";
 
+class LocalDb extends RetroRepo {
   static final LocalDb _instance = LocalDb._internal();
 
   LocalDb._internal();
@@ -96,5 +96,65 @@ class LocalDb extends RetroRepo {
       boardList.remove(key);
     }
     await sharedPreferences.setStringList(_KEY_BOARD_LIST, boardList);
+  }
+}
+
+class LocalRetroBoardRepo extends RetroBoardRepo {
+  @override
+  final String id;
+
+  LocalRetroBoardRepo(this.id) : super(id);
+
+  final LocalDb localDb = LocalDb.getInstance();
+
+  @override
+  Future<RetroBoard> addItem(String text, int categoryIndex) async {
+    var retroBoard = await localDb.getRetroBoard(id);
+    var column = retroBoard.columns[categoryIndex];
+    var time = DateTime.now();
+    var retroItem = RetroItem(
+        id: time.toIso8601String(),
+        description: text,
+        createdAt: time,
+        updatedAt: time,
+        votes: 0,
+        comments: List());
+    column.items.add(retroItem);
+    retroBoard.columns[categoryIndex] = column;
+    return await localDb.updateRetroBoard(retroBoard);
+  }
+
+  @override
+  Future<RetroBoard> getRetroBoard() async {
+    return await localDb.getRetroBoard(id);
+  }
+
+  @override
+  Future<RetroBoard> removeItem(RetroItem item) async {
+    var retroBoard = await localDb.getRetroBoard(id);
+    final categoryIndex = await getItemCategoryIndex(item);
+    var column = retroBoard.columns[categoryIndex];
+    column.items.remove(item);
+    retroBoard.columns[categoryIndex] = column;
+    return await localDb.updateRetroBoard(retroBoard);
+  }
+
+  @override
+  Future<RetroBoard> updateItem(RetroItem item) async {
+    var retroBoard = await localDb.getRetroBoard(id);
+    final categoryIndex = await getItemCategoryIndex(item);
+    var column = retroBoard.columns[categoryIndex];
+    final itemIndex = column.items.indexWhere((child) => child.id == item.id);
+    column.items[itemIndex] = item;
+    retroBoard.columns[categoryIndex] = column;
+    return await localDb.updateRetroBoard(retroBoard);
+  }
+
+  Future<int> getItemCategoryIndex(RetroItem item) async {
+    final retroBoard = await localDb.getRetroBoard(id);
+    return retroBoard.columns.indexWhere((category) =>
+        category.items
+            .singleWhere((child) => child.id == item.id, orElse: null) !=
+        null);
   }
 }

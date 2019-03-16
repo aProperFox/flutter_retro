@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_retro/pages/retro_board.dart';
-import 'package:flutter_retro/res/constants.dart';
 import 'package:flutter_retro/styles/text.dart';
-import 'package:flutter_retro/styles/theme.dart';
 import 'sub_views.dart';
 import 'package:flutter_retro/pages/retro_item_review.dart';
 
-class RetroItem extends StatefulWidget {
+class RetroItemView extends StatefulWidget {
   final String text;
   final Color background;
-  final RetroType type;
+  final String categoryName;
 
-  RetroItem(this.text, this.background, this.type);
+  RetroItemView(this.text, this.background, this.categoryName);
 
   VoidCallback callback;
 
@@ -23,7 +20,7 @@ class RetroItem extends StatefulWidget {
   State<StatefulWidget> createState() => new _RetroItemState();
 }
 
-class _RetroItemState extends State<RetroItem> {
+class _RetroItemState extends State<RetroItemView> {
   int votes;
   RetroItemState status;
   Stopwatch stopwatch;
@@ -42,7 +39,7 @@ class _RetroItemState extends State<RetroItem> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (BuildContext context) {
-                      return RetroItemReviewPage(widget.background, widget.text, widget.type);
+                      return RetroItemReviewPage(widget.background, widget.text, widget.categoryName);
                     },
                   ),
                 );

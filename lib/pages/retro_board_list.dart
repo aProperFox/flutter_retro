@@ -44,13 +44,26 @@ class _RetroBoardListState extends State<RetroBoardList> {
     return new Scaffold(
       appBar: androidAppBar,
       body: getList(),
+      floatingActionButton: getAddButton(),
+    );
+  }
+
+  Widget getAddButton() {
+    return FloatingActionButton(
+      onPressed: () {},
+      child: Icon(
+        Icons.add,
+        color: Colors.white,
+      ),
+      backgroundColor: Colors.blueAccent,
     );
   }
 
   Widget getList() {
     return new FutureBuilder(
       future: retroRepo.getRetroBoards(""),
-      builder: (BuildContext context, AsyncSnapshot<List<RetroBoard>> snapshot) {
+      builder:
+          (BuildContext context, AsyncSnapshot<List<RetroBoard>> snapshot) {
         return new ListView(
           padding: new EdgeInsets.only(top: 8.0),
           children: snapshot.data.map((RetroBoard retroBoard) {
@@ -59,8 +72,8 @@ class _RetroBoardListState extends State<RetroBoardList> {
                 retroBoard.id,
                 null,
                 () => Navigator.of(context).push(new MaterialPageRoute(
-                    builder: (context) => RetroBoardPage.builder(
-                        context, AppTitle, themeProvider(context)))));
+                    builder: (context) =>
+                        RetroBoardPage(boardId: retroBoard.id))));
           }).toList(),
         );
       },

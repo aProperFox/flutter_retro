@@ -1,10 +1,9 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_retro/api/local_db.dart';
+import 'package:flutter_retro/api/models.dart';
+import 'package:flutter_retro/api/repos.dart';
 import 'package:flutter_retro/components/list_items.dart';
 import 'package:flutter_retro/components/dialogs.dart';
-import 'package:flutter_retro/res/constants.dart';
 import 'package:flutter_retro/styles/theme.dart';
 
 class RetroBoardPage extends StatefulWidget {
@@ -20,10 +19,7 @@ class _RetroBoardPageState extends State<RetroBoardPage>
     with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
 
-  List<Widget> startItems;
-  List<Widget> continueItems;
-  List<Widget> stopItems;
-  List<Widget> actionItems;
+  RetroBoard retroBoard;
 
   BottomNavigationBar navBar;
 
@@ -31,7 +27,10 @@ class _RetroBoardPageState extends State<RetroBoardPage>
 
   List<BottomNavigationBarItem> tabs;
 
-  void showDeleteDialog(RetroItem item, VoidCallback confirmDeleteCallback) {
+  RetroBoardRepo retroBoardRepo;
+
+  void showDeleteDialog(
+      RetroItemView item, VoidCallback confirmDeleteCallback) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -39,37 +38,11 @@ class _RetroBoardPageState extends State<RetroBoardPage>
         });
   }
 
-  void onItemAdded(String text) {
+  void onItemAdded(String text) async {
     print(text);
+    var newRetroBoard = await retroBoardRepo.addItem(text, _selectedIndex);
     setState(() {
-      var item = new RetroItem(
-          text, getColor(_selectedIndex), getType(_selectedIndex));
-      switch (_selectedIndex) {
-        case 0:
-          item.addOnLongPressListener(() => showDeleteDialog(item, () {
-                startItems.remove(item);
-              }));
-          startItems.add(item);
-          break;
-        case 1:
-          item.addOnLongPressListener(() => showDeleteDialog(item, () {
-                continueItems.remove(item);
-              }));
-          continueItems.add(item);
-          break;
-        case 2:
-          item.addOnLongPressListener(() => showDeleteDialog(item, () {
-                stopItems.remove(item);
-              }));
-          stopItems.add(item);
-          break;
-        case 3:
-          item.addOnLongPressListener(() => showDeleteDialog(item, () {
-                actionItems.remove(item);
-              }));
-          actionItems.add(item);
-          break;
-      }
+      retroBoard = newRetroBoard;
     });
   }
 
@@ -83,70 +56,19 @@ class _RetroBoardPageState extends State<RetroBoardPage>
     theme = Theme.of(context);
   }
 
-  void initItems() {
-    tabs = [
-      new BottomNavigationBarItem(
-          icon: new Icon(
-            Icons.timeline,
-          ),
-          title: new Text("Start"),
-          backgroundColor: getColor(0)),
-      new BottomNavigationBarItem(
-          icon: new Icon(
-            Icons.thumb_up,
-          ),
-          title: new Text("Continue"),
-          backgroundColor: getColor(1)),
-      new BottomNavigationBarItem(
-          icon: new Icon(
-            Icons.thumb_down,
-          ),
-          title: new Text("Stop"),
-          backgroundColor: getColor(2)),
-      new BottomNavigationBarItem(
-          icon: new Icon(
-            Icons.add_to_photos,
-          ),
-          title: new Text("Actions"),
-          backgroundColor: getColor(3)),
-    ];
-
-    startItems = [
-      new Padding(padding: new EdgeInsets.only(top: 8.0)),
-      new RetroItem("Start using Flutter!", getColor(0), RetroType.Start),
-    ];
-    continueItems = [
-      new Padding(padding: new EdgeInsets.only(top: 8.0)),
-      new RetroItem(
-          "Continue building awesome apps", getColor(1), RetroType.Continue),
-    ];
-    stopItems = [
-      new Padding(padding: new EdgeInsets.only(top: 8.0)),
-      new RetroItem("Stop use React Native", getColor(2), RetroType.Stop),
-    ];
-    actionItems = [
-      new Padding(padding: new EdgeInsets.only(top: 8.0)),
-      new RetroItem("Tyler will keep pestering people about Flutter",
-          getColor(3), RetroType.Action),
-    ];
+  void initItems() async {
+    retroBoardRepo = LocalRetroBoardRepo(widget.boardId);
+    retroBoard = await retroBoardRepo.getRetroBoard();
+    setState(() {
+      tabs = retroBoard.columns.map((category) {
+        BottomNavigationBarItem(
+          icon: Icon(category.icon),
+          title: Text(category.name),
+          backgroundColor: category.color,
+        );
+      }).toList();
+    });
   }
-
-  Color getColor(int index) {
-    switch (index) {
-      case 0:
-        return theme.primaryColor;
-      case 1:
-        return theme.primaryColorLight;
-      case 2:
-        return theme.primaryColorDark;
-      case 3:
-        return theme.disabledColor;
-      default:
-        return Colors.black;
-    }
-  }
-
-  RetroType getType(int index) => RetroType.values[index];
 
   @override
   void dispose() {
@@ -178,20 +100,7 @@ class _RetroBoardPageState extends State<RetroBoardPage>
           });
         },
         controller: controller,
-        children: [
-          new Column(
-            children: startItems,
-          ),
-          new Column(
-            children: continueItems,
-          ),
-          new Column(
-            children: stopItems,
-          ),
-          new Column(
-            children: actionItems,
-          ),
-        ],
+        children: getColumns(),
       ),
       floatingActionButton: new FloatingActionButton(
         onPressed: () {
@@ -200,10 +109,32 @@ class _RetroBoardPageState extends State<RetroBoardPage>
               builder: (BuildContext context) =>
                   newItemBuilder(context, onItemAdded));
         },
-        backgroundColor: getColor(_selectedIndex),
+        backgroundColor: retroBoard.columns[_selectedIndex].color,
         child: new Icon(Icons.add),
       ),
       bottomNavigationBar: navBar,
     );
+  }
+
+  List<Widget> getColumns() {
+    return retroBoard.columns.map((category) {
+      Column(
+        children: category.items.map((item) {
+          var itemView = RetroItemView(
+            item.description,
+            category.color,
+            category.name,
+          );
+          itemView.addOnLongPressListener(() {
+            showDeleteDialog(itemView, () async {
+              final newRetroBoard = await retroBoardRepo.removeItem(item);
+              setState(() {
+                retroBoard = newRetroBoard;
+              });
+            });
+          });
+        }).toList(),
+      );
+    }).toList();
   }
 }

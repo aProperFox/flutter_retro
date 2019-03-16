@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_retro/components/buttons.dart';
 import 'package:flutter_retro/components/sub_views.dart';
-import 'package:flutter_retro/res/constants.dart';
 
 class RetroItemReviewPage extends StatefulWidget {
   final Color background;
   final String subject;
-  final RetroType type;
+  final String categoryName;
 
-  RetroItemReviewPage(this.background, this.subject, this.type);
+  RetroItemReviewPage(this.background, this.subject, this.categoryName);
 
   @override
   RetroItemReviewPageState createState() {
@@ -22,7 +21,7 @@ class RetroItemReviewPageState extends State<RetroItemReviewPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: widget.background,
-        title: Text(getRetroTitle(widget.type)),
+        title: Text(widget.categoryName),
       ),
       body: Material(
         color: widget.background,
