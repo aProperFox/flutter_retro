@@ -5,6 +5,7 @@ import 'package:flutter_retro/api/repos.dart';
 import 'package:flutter_retro/components/list_items.dart';
 import 'package:flutter_retro/network/clients.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_retro/pages/new_retro.dart';
 import 'package:flutter_retro/pages/retro_board.dart';
 import 'package:flutter_retro/res/text.dart';
 import 'package:flutter_retro/styles/text.dart';
@@ -50,7 +51,15 @@ class _RetroBoardListState extends State<RetroBoardList> {
 
   Widget getAddButton() {
     return FloatingActionButton(
-      onPressed: () {},
+      onPressed: () {
+        Navigator.of(context).push(
+          new MaterialPageRoute(
+            builder: (context) {
+              return NewRetroPage();
+            },
+          ),
+        );
+      },
       child: Icon(
         Icons.add,
         color: Colors.white,
@@ -66,7 +75,7 @@ class _RetroBoardListState extends State<RetroBoardList> {
           (BuildContext context, AsyncSnapshot<List<RetroBoard>> snapshot) {
         return new ListView(
           padding: new EdgeInsets.only(top: 8.0),
-          children: snapshot.data.map((RetroBoard retroBoard) {
+          children: (snapshot.data ?? List()).map((RetroBoard retroBoard) {
             return new RetroBoardItem(
                 retroBoard.name,
                 retroBoard.id,
@@ -74,7 +83,7 @@ class _RetroBoardListState extends State<RetroBoardList> {
                 () => Navigator.of(context).push(new MaterialPageRoute(
                     builder: (context) =>
                         RetroBoardPage(boardId: retroBoard.id))));
-          }).toList(),
+          })?.toList(),
         );
       },
     );

@@ -30,7 +30,7 @@ class _SplashPageState extends State<SplashPage>
     );
     colorAnim = new Tween(begin: 0.0, end: 1.0).animate(controller);
     TickerFuture ticker = controller.repeat();
-    ticker.timeout(new Duration(seconds: 3), onTimeout: () {
+    ticker.timeout(new Duration(seconds: 1), onTimeout: () {
       Navigator.of(context).pushAndRemoveUntil(
           new MaterialPageRoute(
             builder: RetroBoardList.builder,

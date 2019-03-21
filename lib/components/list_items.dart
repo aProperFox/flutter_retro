@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_retro/styles/text.dart';
+import 'package:flutter_retro/util/icons_helper.dart';
 import 'sub_views.dart';
 import 'package:flutter_retro/pages/retro_item_review.dart';
 
@@ -39,7 +40,8 @@ class _RetroItemState extends State<RetroItemView> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (BuildContext context) {
-                      return RetroItemReviewPage(widget.background, widget.text, widget.categoryName);
+                      return RetroItemReviewPage(
+                          widget.background, widget.text, widget.categoryName);
                     },
                   ),
                 );
@@ -143,5 +145,102 @@ class RetroBoardItem extends StatelessWidget {
         ),
       ),
     ]);
+  }
+}
+
+class ColumnConfigItem extends StatefulWidget {
+  @override
+  _ColumnConfigItemState createState() => _ColumnConfigItemState();
+}
+
+class _ColumnConfigItemState extends State<ColumnConfigItem> {
+  TextEditingController _nameController = TextEditingController();
+
+  Color selectedColor = Colors.blue;
+  IconData selectedIcon = Icons.add;
+
+  static const List<Color> colors = [
+    Colors.blue,
+    Colors.green,
+    Colors.red,
+    Colors.purple,
+    Colors.yellow,
+    Colors.cyan,
+    Colors.brown
+  ];
+
+  DropdownMenuItem<Color> buildCircle(Color color) {
+    return DropdownMenuItem<Color>(
+      value: color,
+      child: DecoratedBox(
+        decoration: ShapeDecoration(
+          shape: CircleBorder(),
+          color: color,
+        ),
+        child: Container(
+          width: 24.0,
+          height: 24.0,
+        ),
+      ),
+    );
+  }
+
+  DropdownMenuItem<IconData> buildIconDropDown(IconData icon) {
+    return DropdownMenuItem<IconData>(
+      value: icon,
+      child: Icon(
+        icon,
+        size: 24.0,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        Flexible(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _nameController,
+              maxLength: 16,
+              maxLines: 1,
+              decoration: InputDecoration(
+                fillColor: Colors.white70,
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white70),
+                  borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                ),
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Center(
+            child: DropdownButton(
+              iconSize: 24.0,
+              value: selectedColor,
+              items: colors.map((color) => buildCircle(color)).toList(),
+              onChanged: (color) => setState(() => selectedColor = color),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: DropdownButton(
+            value: selectedIcon,
+            items:
+                IconsMap.values.map((icon) => buildIconDropDown(icon)).toList(),
+            onChanged: (icon) {
+              setState(() {
+                selectedIcon = icon;
+              });
+            },
+          ),
+        ),
+      ],
+    );
   }
 }
