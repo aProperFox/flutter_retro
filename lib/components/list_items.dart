@@ -3,6 +3,9 @@ import 'package:flutter_retro/styles/text.dart';
 import 'package:flutter_retro/util/icons_helper.dart';
 import 'sub_views.dart';
 import 'package:flutter_retro/pages/retro_item_review.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:flutter_colorpicker/block_picker.dart';
+import '../styles/colors.dart' as AppColors;
 
 class RetroItemView extends StatefulWidget {
   final String text;
@@ -156,42 +159,21 @@ class ColumnConfigItem extends StatefulWidget {
 class _ColumnConfigItemState extends State<ColumnConfigItem> {
   TextEditingController _nameController = TextEditingController();
 
-  Color selectedColor = Colors.blue;
+  Color selectedColor = AppColors.blue;
   IconData selectedIcon = Icons.add;
 
   static const List<Color> colors = [
-    Colors.blue,
-    Colors.green,
-    Colors.red,
-    Colors.purple,
-    Colors.yellow,
-    Colors.cyan,
-    Colors.brown
+    AppColors.blue,
+    AppColors.green,
+    AppColors.red,
+    AppColors.purple,
+    AppColors.yellow,
   ];
 
-  DropdownMenuItem<Color> buildCircle(Color color) {
-    return DropdownMenuItem<Color>(
-      value: color,
-      child: DecoratedBox(
-        decoration: ShapeDecoration(
-          shape: CircleBorder(),
-          color: color,
-        ),
-        child: Container(
-          width: 24.0,
-          height: 24.0,
-        ),
-      ),
-    );
-  }
-
-  DropdownMenuItem<IconData> buildIconDropDown(IconData icon) {
-    return DropdownMenuItem<IconData>(
-      value: icon,
-      child: Icon(
-        icon,
-        size: 24.0,
-      ),
+  Widget buildIcon(IconData icon) {
+    return Icon(
+      icon,
+      size: 24.0,
     );
   }
 
@@ -204,41 +186,59 @@ class _ColumnConfigItemState extends State<ColumnConfigItem> {
             padding: const EdgeInsets.all(8.0),
             child: TextField(
               controller: _nameController,
-              maxLength: 16,
+              maxLength: 32,
               maxLines: 1,
               decoration: InputDecoration(
-                fillColor: Colors.white70,
+                fillColor: AppColors.grey3,
                 border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white70),
+                  borderSide: BorderSide(color: AppColors.grey3),
                   borderRadius: BorderRadius.all(Radius.circular(4.0)),
                 ),
               ),
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Center(
-            child: DropdownButton(
-              iconSize: 24.0,
-              value: selectedColor,
-              items: colors.map((color) => buildCircle(color)).toList(),
-              onChanged: (color) => setState(() => selectedColor = color),
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: MaterialButton(
+              height: 56.0,
+              color: Colors.white,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: selectedColor,
+                  shape: BoxShape.circle,
+                ),
+                width: 36.0,
+                height: 36.0,
+              ),
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Select a color'),
+                        content: SingleChildScrollView(
+                          child: BlockPicker(
+                            availableColors: colors,
+                            pickerColor: selectedColor,
+                            onColorChanged: (color) {
+                              setState(() {
+                                selectedColor = color;
+                              });
+                            },
+                          ),
+                        ),
+                      );
+                    });
+              },
+              splashColor: AppColors.grey3,
             ),
           ),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: DropdownButton(
-            value: selectedIcon,
-            items:
-                IconsMap.values.map((icon) => buildIconDropDown(icon)).toList(),
-            onChanged: (icon) {
-              setState(() {
-                selectedIcon = icon;
-              });
-            },
-          ),
+          child: MaterialButton(onPressed: () {}),
         ),
       ],
     );
