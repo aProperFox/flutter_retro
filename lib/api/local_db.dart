@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_retro/api/models.dart';
 import 'package:flutter_retro/api/repos.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../styles/colors.dart' as AppColors;
 
 const String _KEY_BOARD_LIST = "key_board_list";
 const String _KEY_RETRO_BOARD_PREFIX = "key_retro_board_prefix_";
@@ -17,6 +19,23 @@ class LocalDb extends RetroRepo {
     return _instance;
   }
 
+  static final List<Category> _defaultColumns = [
+    Category(
+        name: "Continue",
+        icon: Icons.thumb_up,
+        color: AppColors.green,
+        items: []),
+    Category(
+        name: "Stop", icon: Icons.thumb_down, color: AppColors.red, items: []),
+    Category(
+        name: "Start", icon: Icons.timeline, color: AppColors.blue, items: []),
+    Category(
+        name: "Actions",
+        icon: Icons.fast_forward,
+        color: AppColors.purple,
+        items: []),
+  ];
+
   @override
   Future<RetroBoard> createRetroBoard(
     String name,
@@ -28,7 +47,26 @@ class LocalDb extends RetroRepo {
 
     final id = DateTime.now().toIso8601String();
     final retroBoard = RetroBoard(
-        id: id, dueDate: dueDate, teamName: teamName, columns: columns);
+        id: id, dueDate: dueDate, teamName: teamName, columns: columns, name: name);
+    String json = jsonEncode(retroBoard.toJson());
+    print("Creating retro board:\n$json");
+    final key = _buildKey(id);
+    await sharedPreferences.setString(key, json);
+    _updateIndex(key);
+    return retroBoard;
+  }
+
+  @override
+  Future<RetroBoard> createDefaultRetroBoard(String title) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
+    final id = DateTime.now().toIso8601String();
+    final retroBoard = RetroBoard(
+        id: id,
+        dueDate: DateTime(3000),
+        teamName: null,
+        columns: _defaultColumns,
+        name: title);
     String json = jsonEncode(retroBoard.toJson());
     print("Creating retro board:\n$json");
     final key = _buildKey(id);
@@ -60,7 +98,8 @@ class LocalDb extends RetroRepo {
     final sharedPreferences = await SharedPreferences.getInstance();
     final keys = sharedPreferences
         .getKeys()
-        .takeWhile((key) => key.startsWith(_KEY_RETRO_BOARD_PREFIX));
+        .takeWhile((key) => key.startsWith(_KEY_RETRO_BOARD_PREFIX))
+        .toList();
     return keys?.map((key) {
           var json = sharedPreferences.getString(key);
           var map = jsonDecode(json);

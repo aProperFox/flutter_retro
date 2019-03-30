@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_retro/api/local_db.dart';
 import 'package:flutter_retro/api/models.dart';
 import 'package:flutter_retro/api/repos.dart';
+import 'package:flutter_retro/components/dialogs.dart';
 import 'package:flutter_retro/components/list_items.dart';
 import 'package:flutter_retro/network/clients.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -49,16 +50,24 @@ class _RetroBoardListState extends State<RetroBoardList> {
     );
   }
 
+  void onBoardCreation(String name) async {
+    Navigator.pop(context);
+    final boardId = (await retroRepo.createDefaultRetroBoard(name)).id;
+    final boardRoute = MaterialPageRoute(
+        builder: (context) =>
+            RetroBoardPage(
+              boardId: boardId,
+            ));
+    Navigator.push(context, boardRoute);
+  }
+
   Widget getAddButton() {
     return FloatingActionButton(
       onPressed: () {
-        Navigator.of(context).push(
-          new MaterialPageRoute(
-            builder: (context) {
-              return NewRetroPage();
-            },
-          ),
-        );
+        showDialog(
+            context: context,
+            builder: (context) =>
+                newRetroBoardBuilder(context, onBoardCreation));
       },
       child: Icon(
         Icons.add,
@@ -73,18 +82,22 @@ class _RetroBoardListState extends State<RetroBoardList> {
       future: retroRepo.getRetroBoards(""),
       builder:
           (BuildContext context, AsyncSnapshot<List<RetroBoard>> snapshot) {
-        return new ListView(
-          padding: new EdgeInsets.only(top: 8.0),
-          children: (snapshot.data ?? List()).map((RetroBoard retroBoard) {
-            return new RetroBoardItem(
+        List<RetroBoardItem> items = List();
+        snapshot.data?.map((RetroBoard retroBoard) {
+          if (retroBoard != null) {
+            items.add(RetroBoardItem(
                 retroBoard.name,
                 retroBoard.id,
                 null,
-                () => Navigator.of(context).push(new MaterialPageRoute(
-                    builder: (context) =>
-                        RetroBoardPage(boardId: retroBoard.id))));
-          })?.toList(),
-        );
+                    () =>
+                    Navigator.of(context).push(new MaterialPageRoute(
+                        builder: (context) =>
+                            RetroBoardPage(boardId: retroBoard.id)))));
+          }
+        })
+        return new ListView(
+          padding: new EdgeInsets.only(top: 8.0),
+          children: items,);
       },
     );
   }

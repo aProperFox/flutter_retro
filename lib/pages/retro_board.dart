@@ -46,14 +46,11 @@ class _RetroBoardPageState extends State<RetroBoardPage>
     });
   }
 
-  ThemeData theme;
-
   @override
   void initState() {
     initItems();
     controller = new PageController(initialPage: 0);
     super.initState();
-    theme = Theme.of(context);
   }
 
   void initItems() async {
@@ -67,6 +64,17 @@ class _RetroBoardPageState extends State<RetroBoardPage>
           backgroundColor: category.color,
         );
       }).toList();
+      navBar = new BottomNavigationBar(
+        items: tabs,
+        type: BottomNavigationBarType.shifting,
+        currentIndex: _selectedIndex,
+        onTap: (int index) => setState(() {
+          controller.animateToPage(index,
+              duration: new Duration(milliseconds: 300),
+              curve: Curves.easeInOut);
+          _selectedIndex = index;
+        }),
+      );
     });
   }
 
@@ -78,17 +86,7 @@ class _RetroBoardPageState extends State<RetroBoardPage>
 
   @override
   Widget build(BuildContext context) {
-    navBar = new BottomNavigationBar(
-      items: tabs,
-      type: BottomNavigationBarType.shifting,
-      currentIndex: _selectedIndex,
-      onTap: (int index) => setState(() {
-            controller.animateToPage(index,
-                duration: new Duration(milliseconds: 300),
-                curve: Curves.easeInOut);
-            _selectedIndex = index;
-          }),
-    );
+
     return new Scaffold(
       appBar: Theme.of(context).platform == TargetPlatform.android
           ? androidAppBar
@@ -109,7 +107,7 @@ class _RetroBoardPageState extends State<RetroBoardPage>
               builder: (BuildContext context) =>
                   newItemBuilder(context, onItemAdded));
         },
-        backgroundColor: retroBoard.columns[_selectedIndex].color,
+        backgroundColor: retroBoard?.columns[_selectedIndex]?.color,
         child: new Icon(Icons.add),
       ),
       bottomNavigationBar: navBar,
@@ -117,7 +115,7 @@ class _RetroBoardPageState extends State<RetroBoardPage>
   }
 
   List<Widget> getColumns() {
-    return retroBoard.columns.map((category) {
+    return retroBoard?.columns?.map((category) {
       Column(
         children: category.items.map((item) {
           var itemView = RetroItemView(
@@ -135,6 +133,6 @@ class _RetroBoardPageState extends State<RetroBoardPage>
           });
         }).toList(),
       );
-    }).toList();
+    })?.toList();
   }
 }
