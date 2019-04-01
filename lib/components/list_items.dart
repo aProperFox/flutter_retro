@@ -154,10 +154,21 @@ class RetroBoardItem extends StatelessWidget {
 class ColumnConfigItem extends StatefulWidget {
   @override
   _ColumnConfigItemState createState() => _ColumnConfigItemState();
+
+  String getName() {
+  }
+
+  Color getColor() {
+
+  }
+
+  IconData getIcon() {
+
+  }
 }
 
 class _ColumnConfigItemState extends State<ColumnConfigItem> {
-  TextEditingController _nameController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
 
   Color selectedColor = AppColors.blue;
   IconData selectedIcon = Icons.add;
@@ -170,72 +181,113 @@ class _ColumnConfigItemState extends State<ColumnConfigItem> {
     AppColors.yellow,
   ];
 
-  Widget buildIcon(IconData icon) {
-    return Icon(
-      icon,
-      size: 24.0,
-    );
-  }
+  Widget buildTextInput() => Flexible(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextField(
+            controller: nameController,
+            maxLength: 32,
+            maxLines: 1,
+            decoration: InputDecoration(
+              fillColor: AppColors.grey3,
+              border: OutlineInputBorder(
+                borderSide: BorderSide(color: AppColors.grey3),
+                borderRadius: BorderRadius.all(Radius.circular(4.0)),
+              ),
+            ),
+          ),
+        ),
+      );
+
+  Widget buildColorButton() => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: MaterialButton(
+            height: 56.0,
+            color: Colors.white,
+            child: Container(
+              decoration: BoxDecoration(
+                color: selectedColor,
+                shape: BoxShape.circle,
+              ),
+              width: 36.0,
+              height: 36.0,
+            ),
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Select a color'),
+                      content: SingleChildScrollView(
+                        child: BlockPicker(
+                          availableColors: colors,
+                          pickerColor: selectedColor,
+                          onColorChanged: (color) {
+                            setState(() {
+                              selectedColor = color;
+                            });
+                          },
+                        ),
+                      ),
+                    );
+                  });
+            },
+            splashColor: AppColors.grey3,
+          ),
+        ),
+      );
+
+  Widget buildIconPicker() => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: MaterialButton(
+            height: 56.0,
+            color: Colors.white,
+            child: Icon(
+              selectedIcon,
+              color: AppColors.grey,
+              size: 24.0,
+            ),
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Select a color'),
+                      content: SingleChildScrollView(
+                          child: GridView(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 4),
+                        children: IconsMap.values.map((iconData) {
+                          return InkWell(
+                            onTap: () {
+                              setState(() {
+                                selectedIcon = iconData;
+                              });
+                            },
+                            child: Icon(
+                              iconData,
+                              color: AppColors.grey,
+                              size: 24.0,
+                            ),
+                          );
+                        }).toList(),
+                      )),
+                    );
+                  });
+            },
+            splashColor: AppColors.grey3,
+          ),
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        Flexible(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _nameController,
-              maxLength: 32,
-              maxLines: 1,
-              decoration: InputDecoration(
-                fillColor: AppColors.grey3,
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.grey3),
-                  borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                ),
-              ),
-            ),
-          ),
-        ),
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: MaterialButton(
-              height: 56.0,
-              color: Colors.white,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: selectedColor,
-                  shape: BoxShape.circle,
-                ),
-                width: 36.0,
-                height: 36.0,
-              ),
-              onPressed: () {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('Select a color'),
-                        content: SingleChildScrollView(
-                          child: BlockPicker(
-                            availableColors: colors,
-                            pickerColor: selectedColor,
-                            onColorChanged: (color) {
-                              setState(() {
-                                selectedColor = color;
-                              });
-                            },
-                          ),
-                        ),
-                      );
-                    });
-              },
-              splashColor: AppColors.grey3,
-            ),
-          ),
-        ),
+        buildTextInput(),
+        buildColorButton(),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: MaterialButton(onPressed: () {}),

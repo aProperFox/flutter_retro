@@ -9,7 +9,7 @@ import 'package:flutter_retro/styles/theme.dart';
 class RetroBoardPage extends StatefulWidget {
   final String boardId;
 
-  RetroBoardPage({Key key, this.boardId}) : super(key: key);
+  RetroBoardPage(this.boardId);
 
   @override
   State<StatefulWidget> createState() => new _RetroBoardPageState();
