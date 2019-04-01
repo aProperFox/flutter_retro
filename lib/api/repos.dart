@@ -13,6 +13,8 @@ abstract class RetroRepo {
     String teamName,
   );
 
+  Future<RetroBoard> createDefaultRetroBoard(String title);
+
   Future<RetroBoard> updateRetroBoard(RetroBoard retro);
 
   Future deleteRetroBoard(String id);
