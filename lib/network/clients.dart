@@ -31,6 +31,4 @@ class QuoteClient {
 
     return result;
   }
-
-
 }

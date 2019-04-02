@@ -16,7 +16,7 @@ class _SplashPageState extends State<SplashPage>
   String quote = "";
 
   void getQuote() async {
-    String gotQuote = await client.get();
+    String gotQuote = await client.get().timeout(Duration(milliseconds: 900));
     setState(() {
       quote = gotQuote;
     });

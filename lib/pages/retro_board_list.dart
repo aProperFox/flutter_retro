@@ -55,9 +55,7 @@ class _RetroBoardListState extends State<RetroBoardList> {
     final boardId = (await retroRepo.createDefaultRetroBoard(name)).id;
     final boardRoute = MaterialPageRoute(
         builder: (context) =>
-            RetroBoardPage(
-              boardId: boardId,
-            ));
+            RetroBoardPage(boardId,));
     Navigator.push(context, boardRoute);
   }
 
@@ -92,9 +90,9 @@ class _RetroBoardListState extends State<RetroBoardList> {
                     () =>
                     Navigator.of(context).push(new MaterialPageRoute(
                         builder: (context) =>
-                            RetroBoardPage(boardId: retroBoard.id)))));
+                            RetroBoardPage(retroBoard.id)))));
           }
-        })
+        });
         return new ListView(
           padding: new EdgeInsets.only(top: 8.0),
           children: items,);

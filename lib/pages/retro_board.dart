@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_retro/api/local_db.dart';
 import 'package:flutter_retro/api/models.dart';
@@ -21,11 +23,7 @@ class _RetroBoardPageState extends State<RetroBoardPage>
 
   RetroBoard retroBoard;
 
-  BottomNavigationBar navBar;
-
   PageController controller;
-
-  List<BottomNavigationBarItem> tabs;
 
   RetroBoardRepo retroBoardRepo;
 
@@ -48,34 +46,48 @@ class _RetroBoardPageState extends State<RetroBoardPage>
 
   @override
   void initState() {
-    initItems();
     controller = new PageController(initialPage: 0);
+    retroBoardRepo = LocalRetroBoardRepo(widget.boardId);
     super.initState();
   }
 
-  void initItems() async {
-    retroBoardRepo = LocalRetroBoardRepo(widget.boardId);
+  Future<List<Category>> getCategories() async {
     retroBoard = await retroBoardRepo.getRetroBoard();
-    setState(() {
-      tabs = retroBoard.columns.map((category) {
-        BottomNavigationBarItem(
-          icon: Icon(category.icon),
-          title: Text(category.name),
-          backgroundColor: category.color,
-        );
-      }).toList();
-      navBar = new BottomNavigationBar(
-        items: tabs,
-        type: BottomNavigationBarType.shifting,
-        currentIndex: _selectedIndex,
-        onTap: (int index) => setState(() {
-          controller.animateToPage(index,
-              duration: new Duration(milliseconds: 300),
-              curve: Curves.easeInOut);
-          _selectedIndex = index;
-        }),
+    return retroBoard.columns;
+  }
+
+  Future<List<BottomNavigationBarItem>> getItems() async {
+    final columns = await getCategories();
+    return columns.map((category) {
+      return BottomNavigationBarItem(
+        icon: Icon(category.icon),
+        title: Text(category.name),
+        backgroundColor: category.color,
       );
-    });
+    }).toList();
+  }
+
+  FutureBuilder<List<BottomNavigationBarItem>> getBottomNavBar() {
+    return FutureBuilder(
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return BottomNavigationBar(
+            items: snapshot.data,
+            type: BottomNavigationBarType.shifting,
+            currentIndex: _selectedIndex,
+            onTap: (int index) => setState(() {
+                  controller.animateToPage(index,
+                      duration: new Duration(milliseconds: 300),
+                      curve: Curves.easeInOut);
+                  _selectedIndex = index;
+                }),
+          );
+        } else {
+          return Container();
+        }
+      },
+      future: getItems(),
+    );
   }
 
   @override
@@ -86,20 +98,11 @@ class _RetroBoardPageState extends State<RetroBoardPage>
 
   @override
   Widget build(BuildContext context) {
-
     return new Scaffold(
       appBar: Theme.of(context).platform == TargetPlatform.android
           ? androidAppBar
           : iOSAppBar,
-      body: new PageView(
-        onPageChanged: (int index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        controller: controller,
-        children: getColumns(),
-      ),
+      body: getPageView(),
       floatingActionButton: new FloatingActionButton(
         onPressed: () {
           showDialog(
@@ -107,32 +110,56 @@ class _RetroBoardPageState extends State<RetroBoardPage>
               builder: (BuildContext context) =>
                   newItemBuilder(context, onItemAdded));
         },
-        backgroundColor: retroBoard?.columns[_selectedIndex]?.color,
+        backgroundColor: getColor(),
         child: new Icon(Icons.add),
       ),
-      bottomNavigationBar: navBar,
+      bottomNavigationBar: getBottomNavBar(),
     );
   }
 
-  List<Widget> getColumns() {
-    return retroBoard?.columns?.map((category) {
-      Column(
-        children: category.items.map((item) {
-          var itemView = RetroItemView(
-            item.description,
-            category.color,
-            category.name,
-          );
-          itemView.addOnLongPressListener(() {
-            showDeleteDialog(itemView, () async {
-              final newRetroBoard = await retroBoardRepo.removeItem(item);
-              setState(() {
-                retroBoard = newRetroBoard;
-              });
+  Color getColor() {
+    if (retroBoard != null) {
+      return retroBoard.columns[_selectedIndex].color;
+    } else {
+      return Colors.blue;
+    }
+  }
+
+  FutureBuilder<List<Category>> getPageView() {
+    return FutureBuilder(
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Container();
+        }
+        return new PageView(
+          onPageChanged: (int index) {
+            setState(() {
+              _selectedIndex = index;
             });
-          });
-        }).toList(),
-      );
-    })?.toList();
+          },
+          controller: controller,
+          children: snapshot.data.map((category) {
+            return Column(
+              children: category.items.map((item) {
+                var itemView = RetroItemView(
+                  item.description,
+                  category.color,
+                  category.name,
+                );
+                itemView.addOnLongPressListener(() {
+                  showDeleteDialog(itemView, () async {
+                    final newRetroBoard = await retroBoardRepo.removeItem(item);
+                    setState(() {
+                      retroBoard = newRetroBoard;
+                    });
+                  });
+                });
+              }).toList(),
+            );
+          }).toList(),
+        );
+      },
+      future: getCategories(),
+    );
   }
 }
