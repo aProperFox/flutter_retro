@@ -64,7 +64,7 @@ class LocalDb extends RetroRepo {
     final retroBoard = RetroBoard(
         id: id,
         dueDate: DateTime(3000),
-        teamName: null,
+        teamName: "",
         columns: _defaultColumns,
         name: title);
     String json = jsonEncode(retroBoard.toJson());
