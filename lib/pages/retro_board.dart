@@ -38,7 +38,7 @@ class _RetroBoardPageState extends State<RetroBoardPage>
 
   void onItemAdded(String text) async {
     print(text);
-    var newRetroBoard = await retroBoardRepo.addItem(text, _selectedIndex);
+    final newRetroBoard = await retroBoardRepo.addItem(text, _selectedIndex);
     setState(() {
       retroBoard = newRetroBoard;
     });
@@ -133,7 +133,7 @@ class _RetroBoardPageState extends State<RetroBoardPage>
       },
       controller: controller,
       children: retroBoard.columns.map((category) {
-        Column(
+        return Column(
           children: category.items.map((item) {
             var itemView = RetroItemView(
               item.description,
@@ -148,6 +148,7 @@ class _RetroBoardPageState extends State<RetroBoardPage>
                 });
               });
             });
+            return itemView;
           }).toList(),
         );
       }).toList(),

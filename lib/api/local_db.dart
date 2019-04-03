@@ -103,7 +103,7 @@ class LocalDb extends RetroRepo {
     return keys?.map((key) {
           var json = sharedPreferences.getString(key);
           var map = jsonDecode(json);
-          RetroBoard.fromJson(map);
+          return RetroBoard.fromJson(map);
         })?.toList() ??
         List();
   }
