@@ -32,30 +32,41 @@ class _RetroBoardListState extends State<RetroBoardList> {
     }
   }
 
-  RetroRepo retroRepo;
+  RetroRepo retroRepo = LocalDb.getInstance();
+
+  List<RetroBoard> boards = List();
 
   @override
   void initState() {
-    //_ensureLoggedIn();
-    retroRepo = LocalDb.getInstance();
     super.initState();
+    loadBoards();
+  }
+
+  void loadBoards() async {
+    final boardList = await retroRepo.getRetroBoards("");
+    setState(() {
+      print("setting ${boardList.length} boards");
+      boards = boardList;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: androidAppBar,
-      body: getList(),
+      body: ListView(
+        children: mapBoardsToWidgets(),
+      ),
       floatingActionButton: getAddButton(),
     );
   }
 
   void onBoardCreation(String name) async {
-    Navigator.pop(context);
     final boardId = (await retroRepo.createDefaultRetroBoard(name)).id;
     final boardRoute = MaterialPageRoute(
-        builder: (context) =>
-            RetroBoardPage(boardId,));
+        builder: (context) => RetroBoardPage(
+              boardId,
+            ));
     Navigator.push(context, boardRoute);
   }
 
@@ -75,28 +86,14 @@ class _RetroBoardListState extends State<RetroBoardList> {
     );
   }
 
-  Widget getList() {
-    return new FutureBuilder(
-      future: retroRepo.getRetroBoards(""),
-      builder:
-          (BuildContext context, AsyncSnapshot<List<RetroBoard>> snapshot) {
-        List<RetroBoardItem> items = List();
-        snapshot.data?.map((RetroBoard retroBoard) {
-          if (retroBoard != null) {
-            items.add(RetroBoardItem(
-                retroBoard.name,
-                retroBoard.id,
-                null,
-                    () =>
-                    Navigator.of(context).push(new MaterialPageRoute(
-                        builder: (context) =>
-                            RetroBoardPage(retroBoard.id)))));
-          }
-        });
-        return new ListView(
-          padding: new EdgeInsets.only(top: 8.0),
-          children: items,);
-      },
-    );
+  List<Widget> mapBoardsToWidgets() {
+    return boards.where((board) => board != null).map((RetroBoard retroBoard) {
+      return RetroBoardItem(
+          retroBoard.name,
+          retroBoard.id,
+          Text(""),
+          () => Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => RetroBoardPage(retroBoard.id))));
+    }).toList();
   }
 }

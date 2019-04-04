@@ -47,7 +47,11 @@ class LocalDb extends RetroRepo {
 
     final id = DateTime.now().toIso8601String();
     final retroBoard = RetroBoard(
-        id: id, dueDate: dueDate, teamName: teamName, columns: columns, name: name);
+        id: id,
+        dueDate: dueDate,
+        teamName: teamName,
+        columns: columns,
+        name: name);
     String json = jsonEncode(retroBoard.toJson());
     print("Creating retro board:\n$json");
     final key = _buildKey(id);
@@ -96,16 +100,13 @@ class LocalDb extends RetroRepo {
   Future<List<RetroBoard>> getRetroBoards(String teamId) async {
     print("Warning: Team index is not yet implemented. Getting all boards");
     final sharedPreferences = await SharedPreferences.getInstance();
-    final keys = sharedPreferences
-        .getKeys()
-        .takeWhile((key) => key.startsWith(_KEY_RETRO_BOARD_PREFIX))
-        .toList();
-    return keys?.map((key) {
-          var json = sharedPreferences.getString(key);
-          var map = jsonDecode(json);
-          return RetroBoard.fromJson(map);
-        })?.toList() ??
-        List();
+    final keys = sharedPreferences.getStringList(_KEY_BOARD_LIST) ?? List();
+    return keys.map((key) {
+      print("Found item: $key");
+      String json = sharedPreferences.getString(key);
+      final map = jsonDecode(json);
+      return RetroBoard.fromJson(map);
+    }).toList();
   }
 
   @override

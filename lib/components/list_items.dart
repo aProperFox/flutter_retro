@@ -134,7 +134,7 @@ class RetroBoardItem extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: <Widget>[
-                    new Text(
+                    Text(
                       title,
                       style: RetroBoardTitleStyle,
                       softWrap: true,
