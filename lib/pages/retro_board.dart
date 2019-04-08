@@ -133,23 +133,26 @@ class _RetroBoardPageState extends State<RetroBoardPage>
       },
       controller: controller,
       children: retroBoard.columns.map((category) {
-        return Column(
-          children: category.items.map((item) {
-            var itemView = RetroItemView(
-              item.description,
-              category.color,
-              category.name,
-            );
-            itemView.addOnLongPressListener(() {
-              showDeleteDialog(itemView, () async {
-                final newRetroBoard = await retroBoardRepo.removeItem(item);
-                setState(() {
-                  retroBoard = newRetroBoard;
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Column(
+            children: category.items.map((item) {
+              var itemView = RetroItemView(
+                item.description,
+                category.color,
+                category.name,
+              );
+              itemView.addOnLongPressListener(() {
+                showDeleteDialog(itemView, () async {
+                  final newRetroBoard = await retroBoardRepo.removeItem(item);
+                  setState(() {
+                    retroBoard = newRetroBoard;
+                  });
                 });
               });
-            });
-            return itemView;
-          }).toList(),
+              return itemView;
+            }).toList(),
+          ),
         );
       }).toList(),
     );

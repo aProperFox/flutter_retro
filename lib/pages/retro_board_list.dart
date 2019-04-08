@@ -56,6 +56,7 @@ class _RetroBoardListState extends State<RetroBoardList> {
       appBar: androidAppBar,
       body: ListView(
         children: mapBoardsToWidgets(),
+        padding: EdgeInsets.symmetric(vertical: 8.0),
       ),
       floatingActionButton: getAddButton(),
     );
